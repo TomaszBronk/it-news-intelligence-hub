@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="itnewsintelligencehub.client/itnewsintelligencehub.client.esproj">
+    <Build />
+    <Deploy />
+  </Project>
+  <Project Path="ItNewsIntelligenceHub.Server/ItNewsIntelligenceHub.Server.csproj" />
+</Solution>

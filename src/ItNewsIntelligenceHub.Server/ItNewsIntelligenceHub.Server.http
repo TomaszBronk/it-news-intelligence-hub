@@ -1,0 +1,6 @@
+@ItNewsIntelligenceHub.Server_HostAddress = http://localhost:5081
+
+GET {{ItNewsIntelligenceHub.Server_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

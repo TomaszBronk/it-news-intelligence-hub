@@ -35,7 +35,7 @@ if (!fs.existsSync(certFilePath) || !fs.existsSync(keyFilePath)) {
 }
 
 const target = env.ASPNETCORE_HTTPS_PORT ? `https://localhost:${env.ASPNETCORE_HTTPS_PORT}` :
-    env.ASPNETCORE_URLS ? env.ASPNETCORE_URLS.split(';')[0] : 'https://localhost:7097';
+    env.ASPNETCORE_URLS ? env.ASPNETCORE_URLS.split(';')[0] : 'https://localhost:52802';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -47,12 +47,25 @@ export default defineConfig({
     },
     server: {
         proxy: {
+            '^/api': {
+                target,
+                secure: false
+            },
             '^/weatherforecast': {
+                target,
+                secure: false
+            },
+            '^/openapi': {
+                target,
+                secure: false
+            },
+            '^/swagger': {
                 target,
                 secure: false
             }
         },
-        port: parseInt(env.DEV_SERVER_PORT || '52802'),
+        // Prefer explicit DEV_SERVER_PORT, then ASPNETCORE_HTTPS_PORT (used by SPA proxy), then fallback
+        port: parseInt(env.DEV_SERVER_PORT || env.ASPNETCORE_HTTPS_PORT || '5173'),
         https: {
             key: fs.readFileSync(keyFilePath),
             cert: fs.readFileSync(certFilePath),

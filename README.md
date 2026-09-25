@@ -49,12 +49,14 @@ Detailed setup instructions will be added with the first MVP milestone.
 
 ## Roadmap
 
-- [ ] Create solution and local database
-- [ ] Add RSS source management
-- [ ] Implement scheduled feed collection
-- [ ] Store and display news items
-- [ ] Implement filters and saved items
+- [x] Create solution and local database
+- [x] Add RSS source management
+- [ ] Implement manual RSS/Atom feed import
+- [ ] Store and display imported news items
+- [ ] Add parser tests with local XML samples
 - [ ] Add deduplication
+- [ ] Implement scheduled feed collection
+- [ ] Implement filters and saved items
 - [ ] Add AI-assisted Polish summaries
 - [ ] Add editable post drafts
 - [ ] Add tests and CI

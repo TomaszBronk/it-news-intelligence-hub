@@ -1,3 +1,4 @@
+using ItNewsIntelligenceHub.Server.Application.Feeds;
 using ItNewsIntelligenceHub.Server.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,6 +16,13 @@ var connectionString = builder.Configuration.GetConnectionString("NewsHubDatabas
 
 builder.Services.AddDbContext<NewsHubDbContext>(options =>
     options.UseSqlServer(connectionString));
+
+builder.Services.AddHttpClient<IRssFeedReader, RssFeedReader>(client =>
+{
+    client.Timeout = TimeSpan.FromSeconds(30);
+});
+
+builder.Services.AddScoped<INewsFeedImportService, NewsFeedImportService>();
 
 var app = builder.Build();
 

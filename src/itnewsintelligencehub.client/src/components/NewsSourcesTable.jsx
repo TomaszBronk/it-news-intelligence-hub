@@ -1,4 +1,8 @@
-export function NewsSourcesTable({ sources }) {
+export function NewsSourcesTable({
+    sources,
+    fetchingSourceId,
+    onFetch,
+}) {
     if (sources.length === 0) {
         return (
             <div className="empty-state">
@@ -20,58 +24,74 @@ export function NewsSourcesTable({ sources }) {
                         <th>Feed URL</th>
                         <th>Status</th>
                         <th>Last fetch</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
 
                 <tbody>
-                    {sources.map((source) => (
-                        <tr key={source.id}>
-                            <td>
-                                <div className="source-name">
-                                    <strong>{source.name}</strong>
+                    {sources.map((source) => {
+                        const isFetching = fetchingSourceId === source.id;
 
-                                    {source.websiteUrl && (
-                                        <a
-                                            href={source.websiteUrl}
-                                            target="_blank"
-                                            rel="noreferrer"
-                                        >
-                                            Website
-                                        </a>
-                                    )}
-                                </div>
-                            </td>
+                        return (
+                            <tr key={source.id}>
+                                <td>
+                                    <div className="source-name">
+                                        <strong>{source.name}</strong>
 
-                            <td>
-                                <span className="category-badge">{source.category}</span>
-                            </td>
+                                        {source.websiteUrl && (
+                                            <a
+                                                href={source.websiteUrl}
+                                                target="_blank"
+                                                rel="noreferrer"
+                                            >
+                                                Website
+                                            </a>
+                                        )}
+                                    </div>
+                                </td>
 
-                            <td className="feed-url">
-                                <a
-                                    href={source.feedUrl}
-                                    target="_blank"
-                                    rel="noreferrer"
-                                    title={source.feedUrl}
-                                >
-                                    {source.feedUrl}
-                                </a>
-                            </td>
+                                <td>
+                                    <span className="category-badge">{source.category}</span>
+                                </td>
 
-                            <td>
-                                <span
-                                    className={
-                                        source.isActive
-                                            ? 'status-badge status-active'
-                                            : 'status-badge status-inactive'
-                                    }
-                                >
-                                    {source.isActive ? 'Active' : 'Inactive'}
-                                </span>
-                            </td>
+                                <td className="feed-url">
+                                    <a
+                                        href={source.feedUrl}
+                                        target="_blank"
+                                        rel="noreferrer"
+                                        title={source.feedUrl}
+                                    >
+                                        {source.feedUrl}
+                                    </a>
+                                </td>
 
-                            <td>{formatDate(source.lastFetchedAtUtc)}</td>
-                        </tr>
-                    ))}
+                                <td>
+                                    <span
+                                        className={
+                                            source.isActive
+                                                ? 'status-badge status-active'
+                                                : 'status-badge status-inactive'
+                                        }
+                                    >
+                                        {source.isActive ? 'Active' : 'Inactive'}
+                                    </span>
+                                </td>
+
+                                <td>{formatDate(source.lastFetchedAtUtc)}</td>
+
+                                <td>
+                                    <button
+                                        className="button button-secondary button-small"
+                                        type="button"
+                                        onClick={() => onFetch(source.id)}
+                                        disabled={!source.isActive || isFetching}
+                                    >
+                                        {isFetching ? 'Fetching...' : 'Fetch now'}
+                                    </button>
+                                </td>
+                            </tr>
+                        );
+                    })}
                 </tbody>
             </table>
         </div>

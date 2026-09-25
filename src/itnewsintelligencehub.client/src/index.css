@@ -109,3 +109,116 @@ code {
   padding: 4px 8px;
   background: var(--code-bg);
 }
+.alert-success {
+    border-color: #abefc6;
+    background: #f6fef9;
+}
+
+    .alert-success strong {
+        color: #067647;
+    }
+
+    .alert-success p {
+        margin: 4px 0 0;
+        color: #05603a;
+    }
+
+.button-small {
+    width: auto;
+    padding: 7px 10px;
+    font-size: 0.82rem;
+}
+.button:not(.button-small) {
+    width: 100%;
+}
+.news-items-list {
+    display: grid;
+    gap: 16px;
+}
+
+.news-item-card {
+    padding: 20px;
+    border: 1px solid #eaecf0;
+    border-radius: 12px;
+    background: #ffffff;
+}
+
+.news-item-meta,
+.news-item-footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    color: #667085;
+    font-size: 0.85rem;
+}
+
+.news-item-card h2 {
+    margin: 14px 0 10px;
+    color: #101828;
+}
+
+.news-item-card p {
+    color: #475467;
+    line-height: 1.65;
+}
+
+.news-item-footer {
+    justify-content: space-between;
+    margin-top: 16px;
+}
+.app-navigation {
+    border-bottom: 1px solid #e4e7ec;
+    background: #ffffff;
+}
+
+.app-navigation-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: min(1180px, calc(100% - 32px));
+    min-height: 64px;
+    margin: 0 auto;
+    gap: 20px;
+}
+
+.app-brand,
+.navigation-link {
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+}
+
+.app-brand {
+    padding: 0;
+    color: #101828;
+    font-weight: 800;
+}
+
+.app-navigation-links {
+    display: flex;
+    gap: 4px;
+}
+
+.navigation-link {
+    padding: 8px 10px;
+    border-radius: 6px;
+    color: #667085;
+    font-weight: 600;
+}
+
+    .navigation-link:hover,
+    .navigation-link.active {
+        color: #155eef;
+        background: #eff4ff;
+    }
+
+@media (max-width: 700px) {
+    .app-navigation-content {
+        width: min(100% - 24px, 1180px);
+        min-height: auto;
+        padding: 14px 0;
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}

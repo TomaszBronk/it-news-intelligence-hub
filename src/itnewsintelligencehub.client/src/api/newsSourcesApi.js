@@ -35,6 +35,18 @@ export async function createNewsSource(request) {
     return response.json();
 }
 
+export async function fetchNewsSource(sourceId) {
+    const response = await fetch(`${baseUrl}/${sourceId}/fetch`, {
+        method: 'POST',
+    });
+
+    if (!response.ok) {
+        throw await createApiError(response);
+    }
+
+    return response.json();
+}
+
 async function createApiError(response) {
     let details;
 

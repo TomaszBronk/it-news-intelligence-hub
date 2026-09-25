@@ -3,12 +3,13 @@ using ItNewsIntelligenceHub.Server.Domain.Entities;
 using ItNewsIntelligenceHub.Server.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using ItNewsIntelligenceHub.Server.Application.Feeds;
 
 namespace ItNewsIntelligenceHub.Server.Controllers;
 
 [ApiController]
 [Route("api/news-sources")]
-public class NewsSourcesController(NewsHubDbContext dbContext) : ControllerBase
+public class NewsSourcesController(NewsHubDbContext dbContext, INewsFeedImportService newsFeedImportService) : ControllerBase
 {
     [HttpGet]
     [ProducesResponseType(typeof(IReadOnlyCollection<NewsSourceResponse>), StatusCodes.Status200OK)]
@@ -156,6 +157,51 @@ public class NewsSourcesController(NewsHubDbContext dbContext) : ControllerBase
         await dbContext.SaveChangesAsync(cancellationToken);
 
         return NoContent();
+    }
+
+    [HttpPost("{id:guid}/fetch")]
+    [ProducesResponseType(typeof(FeedImportResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    [ProducesResponseType(StatusCodes.Status502BadGateway)]
+    public async Task<ActionResult<FeedImportResult>> FetchNow(
+    Guid id,
+    CancellationToken cancellationToken)
+    {
+        try
+        {
+            var result = await newsFeedImportService.ImportAsync(id, cancellationToken);
+
+            return Ok(result);
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound();
+        }
+        catch (InvalidOperationException exception)
+        {
+            return Conflict(new { message = exception.Message });
+        }
+        catch (HttpRequestException exception)
+        {
+            return StatusCode(
+                StatusCodes.Status502BadGateway,
+                new
+                {
+                    message = "The RSS/Atom feed could not be downloaded.",
+                    detail = exception.Message
+                });
+        }
+        catch (System.Xml.XmlException exception)
+        {
+            return StatusCode(
+                StatusCodes.Status502BadGateway,
+                new
+                {
+                    message = "The RSS/Atom feed contains invalid XML.",
+                    detail = exception.Message
+                });
+        }
     }
 
     private static NewsSourceResponse ToResponse(NewsSource source) =>

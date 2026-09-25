@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import {
     ApiError,
     createNewsSource,
+    fetchNewsSource,
     getNewsSources,
 } from '../api/newsSourcesApi';
 import { NewsSourceForm } from '../components/NewsSourceForm';
@@ -13,6 +14,8 @@ export function NewsSourcesPage() {
     const [isFormVisible, setIsFormVisible] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [errorMessage, setErrorMessage] = useState(null);
+    const [fetchingSourceId, setFetchingSourceId] = useState(null);
+    const [successMessage, setSuccessMessage] = useState(null);
 
     useEffect(() => {
         void loadSources();
@@ -50,6 +53,27 @@ export function NewsSourcesPage() {
             setErrorMessage(getErrorMessage(error));
         } finally {
             setIsSubmitting(false);
+        }
+    }
+
+    async function handleFetchSource(sourceId) {
+        setFetchingSourceId(sourceId);
+        setErrorMessage(null);
+        setSuccessMessage(null);
+
+        try {
+            const result = await fetchNewsSource(sourceId);
+
+            setSuccessMessage(
+                `Import completed: ${result.importedItemsCount} new item(s) imported, `
+                + `${result.skippedItemsCount} existing item(s) skipped.`,
+            );
+
+            await loadSources();
+        } catch (error) {
+            setErrorMessage(getErrorMessage(error));
+        } finally {
+            setFetchingSourceId(null);
         }
     }
 
@@ -95,6 +119,15 @@ export function NewsSourcesPage() {
                 </section>
             )}
 
+            {successMessage && (
+                <section className="alert alert-success" role="status">
+                    <div>
+                        <strong>Feed import completed.</strong>
+                        <p>{successMessage}</p>
+                    </div>
+                </section>
+            )}
+
             {isFormVisible && (
                 <section className="content-card">
                     <NewsSourceForm
@@ -129,7 +162,11 @@ export function NewsSourcesPage() {
                 {isLoading ? (
                     <div className="loading-state">Loading sources...</div>
                 ) : (
-                    <NewsSourcesTable sources={sources} />
+                        <NewsSourcesTable
+                            sources={sources}
+                            fetchingSourceId={fetchingSourceId}
+                            onFetch={handleFetchSource}
+                        />
                 )}
             </section>
         </main>

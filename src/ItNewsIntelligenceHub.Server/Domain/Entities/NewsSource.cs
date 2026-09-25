@@ -17,5 +17,6 @@
         public DateTime CreatedAtUtc { get; set; } = DateTime.UtcNow;
 
         public DateTime? LastFetchedAtUtc { get; set; }
+        public ICollection<NewsItem> NewsItems { get; set; } = new List<NewsItem>();
     }
 }

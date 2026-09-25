@@ -1,6 +1,8 @@
-using ItNewsIntelligenceHub.Server.Application.Feeds;
-using ItNewsIntelligenceHub.Server.Infrastructure.Persistence;
+using ItNewsIntelligenceHub.Application.Feeds;
+using ItNewsIntelligenceHub.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
+using ItNewsIntelligenceHub.Infrastructure.Feeds;
+using ItNewsIntelligenceHub.Application.Abstractions.Feeds;
 
 var builder = WebApplication.CreateBuilder(args);
 

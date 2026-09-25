@@ -1,5 +1,5 @@
 ﻿using ItNewsIntelligenceHub.Server.Contracts.NewsItems;
-using ItNewsIntelligenceHub.Server.Infrastructure.Persistence;
+using ItNewsIntelligenceHub.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 

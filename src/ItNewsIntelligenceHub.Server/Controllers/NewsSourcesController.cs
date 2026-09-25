@@ -1,9 +1,10 @@
 ﻿using ItNewsIntelligenceHub.Server.Contracts.NewsSources;
-using ItNewsIntelligenceHub.Server.Domain.Entities;
-using ItNewsIntelligenceHub.Server.Infrastructure.Persistence;
+using ItNewsIntelligenceHub.Domain.Entities;
+using ItNewsIntelligenceHub.Infrastructure.Persistence;
+using ItNewsIntelligenceHub.Application.Feeds;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using ItNewsIntelligenceHub.Server.Application.Feeds;
+
 
 namespace ItNewsIntelligenceHub.Server.Controllers;
 

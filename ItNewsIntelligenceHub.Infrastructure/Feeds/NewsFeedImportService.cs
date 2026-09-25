@@ -1,12 +1,15 @@
-﻿using ItNewsIntelligenceHub.Server.Domain.Entities;
-using ItNewsIntelligenceHub.Server.Infrastructure.Persistence;
-using Microsoft.EntityFrameworkCore;
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 using System.Text;
+using ItNewsIntelligenceHub.Application.Abstractions.Feeds;
+using ItNewsIntelligenceHub.Application.Feeds;
+using ItNewsIntelligenceHub.Domain.Entities;
+using ItNewsIntelligenceHub.Infrastructure.Persistence;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
-namespace ItNewsIntelligenceHub.Server.Application.Feeds;
+namespace ItNewsIntelligenceHub.Infrastructure.Feeds;
 
-public class NewsFeedImportService(
+public sealed class NewsFeedImportService(
     NewsHubDbContext dbContext,
     IRssFeedReader rssFeedReader,
     ILogger<NewsFeedImportService> logger) : INewsFeedImportService
@@ -27,7 +30,8 @@ public class NewsFeedImportService(
         }
 
         if (!Uri.TryCreate(source.FeedUrl, UriKind.Absolute, out var feedUrl)
-            || (feedUrl.Scheme != Uri.UriSchemeHttp && feedUrl.Scheme != Uri.UriSchemeHttps))
+            || (feedUrl.Scheme != Uri.UriSchemeHttp
+                && feedUrl.Scheme != Uri.UriSchemeHttps))
         {
             throw new InvalidOperationException(
                 $"News source '{source.Name}' has an invalid feed URL.");
@@ -62,7 +66,7 @@ public class NewsFeedImportService(
                 SourceId = source.Id,
                 ExternalId = Truncate(fetchedItem.ExternalId, 512)!,
                 Title = Truncate(fetchedItem.Title, 500)!,
-                Summary = Truncate(fetchedItem.Summary, 8000)!,
+                Summary = Truncate(fetchedItem.Summary, 8000),
                 OriginalUrl = Truncate(fetchedItem.OriginalUrl, 2048)!,
                 Author = Truncate(fetchedItem.Author, 250),
                 PublishedAtUtc = fetchedItem.PublishedAtUtc,

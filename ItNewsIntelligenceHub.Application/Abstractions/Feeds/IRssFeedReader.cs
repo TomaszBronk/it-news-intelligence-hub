@@ -1,4 +1,6 @@
-﻿namespace ItNewsIntelligenceHub.Server.Application.Feeds
+﻿using ItNewsIntelligenceHub.Application.NewsSources.Commands.FetchNewsSource;
+
+namespace ItNewsIntelligenceHub.Application.Abstractions.Feeds
 {
     public interface IRssFeedReader
     {

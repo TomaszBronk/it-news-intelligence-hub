@@ -1,5 +1,6 @@
-﻿namespace ItNewsIntelligenceHub.Server.Domain.Entities
-{
+﻿namespace ItNewsIntelligenceHub.Domain.Entities;
+
+
     public class NewsSource
     {
         public Guid Id { get; set; } = Guid.NewGuid();
@@ -19,4 +20,4 @@
         public DateTime? LastFetchedAtUtc { get; set; }
         public ICollection<NewsItem> NewsItems { get; set; } = new List<NewsItem>();
     }
-}
+

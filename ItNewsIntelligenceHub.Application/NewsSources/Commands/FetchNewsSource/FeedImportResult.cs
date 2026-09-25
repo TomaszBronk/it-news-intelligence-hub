@@ -1,4 +1,4 @@
-﻿namespace ItNewsIntelligenceHub.Server.Application.Feeds
+﻿namespace ItNewsIntelligenceHub.Application.Feeds
 {
     public record FeedImportResult(
        Guid SourceId,

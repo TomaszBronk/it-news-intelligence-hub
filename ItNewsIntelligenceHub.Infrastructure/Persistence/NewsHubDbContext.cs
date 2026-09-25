@@ -1,7 +1,7 @@
-﻿using ItNewsIntelligenceHub.Server.Domain.Entities;
+﻿using ItNewsIntelligenceHub.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace ItNewsIntelligenceHub.Server.Infrastructure.Persistence;
+namespace ItNewsIntelligenceHub.Infrastructure.Persistence;
 
 public class NewsHubDbContext(DbContextOptions<NewsHubDbContext> options)
     : DbContext(options)

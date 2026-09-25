@@ -1,5 +1,5 @@
-﻿namespace ItNewsIntelligenceHub.Server.Domain.Entities
-{
+﻿namespace ItNewsIntelligenceHub.Domain.Entities;
+
     public class NewsItem
     {
         public Guid Id { get; set; } = Guid.NewGuid();
@@ -26,4 +26,4 @@
 
         public string Category { get; set; } = "Other";
     }
-}
+

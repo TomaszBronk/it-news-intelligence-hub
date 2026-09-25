@@ -1,15 +1,17 @@
-﻿using ItNewsIntelligenceHub.Server.Contracts.NewsSources;
-using ItNewsIntelligenceHub.Server.Domain.Entities;
-using ItNewsIntelligenceHub.Server.Infrastructure.Persistence;
+﻿using ItNewsIntelligenceHub.Application.Feeds;
+using ItNewsIntelligenceHub.Application.NewsSources.Commands.FetchNewsSource;
+using ItNewsIntelligenceHub.Domain.Entities;
+using ItNewsIntelligenceHub.Infrastructure.Persistence;
+using ItNewsIntelligenceHub.Server.Contracts.NewsSources;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using ItNewsIntelligenceHub.Server.Application.Feeds;
+
 
 namespace ItNewsIntelligenceHub.Server.Controllers;
 
 [ApiController]
 [Route("api/news-sources")]
-public class NewsSourcesController(NewsHubDbContext dbContext, INewsFeedImportService newsFeedImportService) : ControllerBase
+public class NewsSourcesController(NewsHubDbContext dbContext, IFetchNewsSourceHandler fetchNewsSourceHandler) : ControllerBase
 {
     [HttpGet]
     [ProducesResponseType(typeof(IReadOnlyCollection<NewsSourceResponse>), StatusCodes.Status200OK)]
@@ -160,17 +162,19 @@ public class NewsSourcesController(NewsHubDbContext dbContext, INewsFeedImportSe
     }
 
     [HttpPost("{id:guid}/fetch")]
-    [ProducesResponseType(typeof(FeedImportResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(FetchNewsSourceResult), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     [ProducesResponseType(StatusCodes.Status502BadGateway)]
-    public async Task<ActionResult<FeedImportResult>> FetchNow(
+    public async Task<ActionResult<FetchNewsSourceResult>> FetchNow(
     Guid id,
     CancellationToken cancellationToken)
     {
         try
         {
-            var result = await newsFeedImportService.ImportAsync(id, cancellationToken);
+            var result = await fetchNewsSourceHandler.HandleAsync(
+                new FetchNewsSourceCommand(id),
+                cancellationToken);
 
             return Ok(result);
         }

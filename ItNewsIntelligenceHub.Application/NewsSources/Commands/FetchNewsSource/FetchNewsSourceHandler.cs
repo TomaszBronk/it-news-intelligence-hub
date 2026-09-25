@@ -1,24 +1,28 @@
-﻿using ItNewsIntelligenceHub.Server.Domain.Entities;
-using ItNewsIntelligenceHub.Server.Infrastructure.Persistence;
-using Microsoft.EntityFrameworkCore;
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 using System.Text;
+using ItNewsIntelligenceHub.Application.Abstractions.Feeds;
+using ItNewsIntelligenceHub.Application.Abstractions.Persistence;
+using ItNewsIntelligenceHub.Application.Abstractions.Time;
+using ItNewsIntelligenceHub.Domain.Entities;
 
-namespace ItNewsIntelligenceHub.Server.Application.Feeds;
+namespace ItNewsIntelligenceHub.Application.NewsSources.Commands.FetchNewsSource;
 
-public class NewsFeedImportService(
-    NewsHubDbContext dbContext,
+public sealed class FetchNewsSourceHandler(
+    INewsSourceRepository newsSourceRepository,
+    INewsItemRepository newsItemRepository,
+    IUnitOfWork unitOfWork,
     IRssFeedReader rssFeedReader,
-    ILogger<NewsFeedImportService> logger) : INewsFeedImportService
+    IClock clock) : IFetchNewsSourceHandler
 {
-    public async Task<FeedImportResult> ImportAsync(
-        Guid sourceId,
+    public async Task<FetchNewsSourceResult> HandleAsync(
+        FetchNewsSourceCommand command,
         CancellationToken cancellationToken)
     {
-        var source = await dbContext.NewsSources
-            .SingleOrDefaultAsync(item => item.Id == sourceId, cancellationToken)
+        var source = await newsSourceRepository.GetByIdAsync(
+            command.SourceId,
+            cancellationToken)
             ?? throw new KeyNotFoundException(
-                $"News source with ID '{sourceId}' was not found.");
+                $"News source with ID '{command.SourceId}' was not found.");
 
         if (!source.IsActive)
         {
@@ -27,7 +31,8 @@ public class NewsFeedImportService(
         }
 
         if (!Uri.TryCreate(source.FeedUrl, UriKind.Absolute, out var feedUrl)
-            || (feedUrl.Scheme != Uri.UriSchemeHttp && feedUrl.Scheme != Uri.UriSchemeHttps))
+            || (feedUrl.Scheme != Uri.UriSchemeHttp
+                && feedUrl.Scheme != Uri.UriSchemeHttps))
         {
             throw new InvalidOperationException(
                 $"News source '{source.Name}' has an invalid feed URL.");
@@ -35,17 +40,19 @@ public class NewsFeedImportService(
 
         var fetchedItems = await rssFeedReader.ReadAsync(feedUrl, cancellationToken);
 
-        var existingExternalIds = await dbContext.NewsItems
-            .Where(item => item.SourceId == sourceId)
+        var existingItems = await newsItemRepository.GetBySourceIdAsync(
+            source.Id,
+            cancellationToken);
+
+        var existingExternalIds = existingItems
             .Select(item => item.ExternalId)
-            .ToHashSetAsync(cancellationToken);
+            .ToHashSet(StringComparer.Ordinal);
 
-        var existingOriginalUrls = await dbContext.NewsItems
-            .Where(item => item.SourceId == sourceId)
+        var existingOriginalUrls = existingItems
             .Select(item => item.OriginalUrl)
-            .ToHashSetAsync(cancellationToken);
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
 
-        var importedItemsCount = 0;
+        var itemsToAdd = new List<NewsItem>();
         var skippedItemsCount = 0;
 
         foreach (var fetchedItem in fetchedItems)
@@ -62,42 +69,35 @@ public class NewsFeedImportService(
                 SourceId = source.Id,
                 ExternalId = Truncate(fetchedItem.ExternalId, 512)!,
                 Title = Truncate(fetchedItem.Title, 500)!,
-                Summary = Truncate(fetchedItem.Summary, 8000)!,
+                Summary = Truncate(fetchedItem.Summary, 8000),
                 OriginalUrl = Truncate(fetchedItem.OriginalUrl, 2048)!,
                 Author = Truncate(fetchedItem.Author, 250),
                 PublishedAtUtc = fetchedItem.PublishedAtUtc,
-                RetrievedAtUtc = DateTimeOffset.UtcNow,
+                RetrievedAtUtc = clock.UtcNowOffset,
                 ContentHash = CreateSha256Hash(
                     $"{fetchedItem.Title}|{fetchedItem.OriginalUrl}|{fetchedItem.PublishedAtUtc:O}"),
                 Category = source.Category
             };
 
-            dbContext.NewsItems.Add(newsItem);
+            itemsToAdd.Add(newsItem);
 
             existingExternalIds.Add(fetchedItem.ExternalId);
             existingOriginalUrls.Add(fetchedItem.OriginalUrl);
-
-            importedItemsCount++;
         }
 
-        source.LastFetchedAtUtc = DateTime.UtcNow;
+        await newsItemRepository.AddRangeAsync(itemsToAdd, cancellationToken);
 
-        await dbContext.SaveChangesAsync(cancellationToken);
+        source.LastFetchedAtUtc = clock.UtcNow;
 
-        logger.LogInformation(
-            "Imported {ImportedItemsCount} and skipped {SkippedItemsCount} item(s) from source {SourceName} ({SourceId})",
-            importedItemsCount,
-            skippedItemsCount,
-            source.Name,
-            source.Id);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return new FeedImportResult(
+        return new FetchNewsSourceResult(
             source.Id,
             source.Name,
             fetchedItems.Count,
-            importedItemsCount,
+            itemsToAdd.Count,
             skippedItemsCount,
-            DateTimeOffset.UtcNow);
+            clock.UtcNowOffset);
     }
 
     private static string CreateSha256Hash(string input)

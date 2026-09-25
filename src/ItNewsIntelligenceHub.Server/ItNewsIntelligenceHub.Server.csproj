@@ -28,9 +28,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\itnewsintelligencehub.client\itnewsintelligencehub.client.esproj">
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-    </ProjectReference>
+    <ProjectReference Include="..\..\ItNewsIntelligenceHub.Application\ItNewsIntelligenceHub.Application.csproj" />
+    <ProjectReference Include="..\..\ItNewsIntelligenceHub.Infrastructure\ItNewsIntelligenceHub.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

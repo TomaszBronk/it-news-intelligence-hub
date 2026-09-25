@@ -51,8 +51,8 @@ Detailed setup instructions will be added with the first MVP milestone.
 
 - [x] Create solution and local database
 - [x] Add RSS source management
-- [ ] Implement manual RSS/Atom feed import
-- [ ] Store and display imported news items
+- [x] Implement manual RSS/Atom feed import
+- [x] Store and display imported news items
 - [ ] Add parser tests with local XML samples
 - [ ] Add deduplication
 - [ ] Implement scheduled feed collection

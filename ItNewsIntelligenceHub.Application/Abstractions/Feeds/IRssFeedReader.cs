@@ -1,11 +1,10 @@
 ﻿using ItNewsIntelligenceHub.Application.NewsSources.Commands.FetchNewsSource;
 
-namespace ItNewsIntelligenceHub.Application.Abstractions.Feeds
+namespace ItNewsIntelligenceHub.Application.Abstractions.Feeds;
+
+public interface IRssFeedReader
 {
-    public interface IRssFeedReader
-    {
-        Task<IReadOnlyCollection<FeedNewsItem>> ReadAsync(
-            Uri feedUrl,
-            CancellationToken cancellationToken);
-    }
+    Task<IReadOnlyCollection<FeedNewsItem>> ReadAsync(
+        Uri feedUrl,
+        CancellationToken cancellationToken);
 }

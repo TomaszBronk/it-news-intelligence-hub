@@ -1,12 +1,12 @@
-using ItNewsIntelligenceHub.Application.Feeds;
-using ItNewsIntelligenceHub.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
-using ItNewsIntelligenceHub.Infrastructure.Feeds;
-using ItNewsIntelligenceHub.Application.Abstractions.Feeds;
+using ItNewsIntelligenceHub.Application;
+using ItNewsIntelligenceHub.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddApplication();
+builder.Services.AddInfrastructure(builder.Configuration);
 
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
@@ -16,15 +16,6 @@ var connectionString = builder.Configuration.GetConnectionString("NewsHubDatabas
     ?? throw new InvalidOperationException(
         "Connection string 'NewsHubDatabase' was not found.");
 
-builder.Services.AddDbContext<NewsHubDbContext>(options =>
-    options.UseSqlServer(connectionString));
-
-builder.Services.AddHttpClient<IRssFeedReader, RssFeedReader>(client =>
-{
-    client.Timeout = TimeSpan.FromSeconds(30);
-});
-
-builder.Services.AddScoped<INewsFeedImportService, NewsFeedImportService>();
 
 var app = builder.Build();
 

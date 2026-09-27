@@ -8,13 +8,14 @@ export function useFetchNewsSource() {
     return useMutation({
         mutationFn: fetchNewsSource,
         onSuccess: async () => {
-            await queryClient.invalidateQueries({
-                queryKey: newsSourcesQueryKey,
-            });
-
-            await queryClient.invalidateQueries({
-                queryKey: ['news-items'],
-            });
+            await Promise.all([
+                queryClient.invalidateQueries({
+                    queryKey: newsSourcesQueryKey,
+                }),
+                queryClient.invalidateQueries({
+                    queryKey: ['news-items'],
+                }),
+            ]);
         },
     });
 }

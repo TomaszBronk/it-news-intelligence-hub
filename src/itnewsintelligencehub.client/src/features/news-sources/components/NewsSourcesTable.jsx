@@ -21,9 +21,9 @@ export function NewsSourcesTable({
                     <tr>
                         <th>Source</th>
                         <th>Category</th>
-                        <th>Feed URL</th>
                         <th>Status</th>
-                        <th>Last fetch</th>
+                        <th>Last attempt</th>
+                        <th>Last successful import</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -31,12 +31,22 @@ export function NewsSourcesTable({
                 <tbody>
                     {sources.map((source) => {
                         const isFetching = fetchingSourceId === source.id;
+                        const status = getImportStatus(source);
 
                         return (
                             <tr key={source.id}>
                                 <td>
                                     <div className="source-name">
                                         <strong>{source.name}</strong>
+
+                                        <a
+                                            href={source.feedUrl}
+                                            target="_blank"
+                                            rel="noreferrer"
+                                            title={source.feedUrl}
+                                        >
+                                            RSS / Atom feed
+                                        </a>
 
                                         {source.websiteUrl && (
                                             <a
@@ -51,43 +61,45 @@ export function NewsSourcesTable({
                                 </td>
 
                                 <td>
-                                    <span className="category-badge">{source.category}</span>
-                                </td>
-
-                                <td className="feed-url">
-                                    <a
-                                        href={source.feedUrl}
-                                        target="_blank"
-                                        rel="noreferrer"
-                                        title={source.feedUrl}
-                                    >
-                                        {source.feedUrl}
-                                    </a>
-                                </td>
-
-                                <td>
-                                    <span
-                                        className={
-                                            source.isActive
-                                                ? 'status-badge status-active'
-                                                : 'status-badge status-inactive'
-                                        }
-                                    >
-                                        {source.isActive ? 'Active' : 'Inactive'}
+                                    <span className="category-badge">
+                                        {source.category}
                                     </span>
                                 </td>
 
-                                <td>{formatDate(source.lastFetchedAtUtc)}</td>
+                                <td>
+                                    <ImportStatusBadge status={status} />
+                                </td>
+
+                                <td>{formatDate(source.lastFetchAttemptAtUtc)}</td>
+
+                                <td>{formatDate(source.lastSuccessfulFetchAtUtc)}</td>
 
                                 <td>
-                                    <button
-                                        className="button button-secondary button-small"
-                                        type="button"
-                                        onClick={() => onFetch(source.id)}
-                                        disabled={!source.isActive || isFetching}
-                                    >
-                                        {isFetching ? 'Fetching...' : 'Fetch now'}
-                                    </button>
+                                    <div className="source-actions">
+                                        <button
+                                            className="button button-secondary button-small"
+                                            type="button"
+                                            onClick={() => onFetch(source.id)}
+                                            disabled={!source.isActive || isFetching}
+                                            title={
+                                                source.isActive
+                                                    ? 'Import this feed now'
+                                                    : 'This source is inactive'
+                                            }
+                                        >
+                                            {isFetching ? 'Fetching...' : 'Fetch now'}
+                                        </button>
+
+                                        {!source.isActive && (
+                                            <span className="inactive-note">Inactive</span>
+                                        )}
+                                    </div>
+
+                                    {source.lastFetchError && (
+                                        <p className="import-error-message" role="alert">
+                                            {source.lastFetchError}
+                                        </p>
+                                    )}
                                 </td>
                             </tr>
                         );
@@ -98,9 +110,38 @@ export function NewsSourcesTable({
     );
 }
 
+function ImportStatusBadge({ status }) {
+    return (
+        <span className={`import-status-badge import-status-${status.kind}`}>
+            {status.label}
+        </span>
+    );
+}
+
+function getImportStatus(source) {
+    if (source.lastFetchError) {
+        return {
+            kind: 'failed',
+            label: 'Failed',
+        };
+    }
+
+    if (source.lastSuccessfulFetchAtUtc) {
+        return {
+            kind: 'success',
+            label: 'Success',
+        };
+    }
+
+    return {
+        kind: 'pending',
+        label: 'Not imported yet',
+    };
+}
+
 function formatDate(value) {
     if (!value) {
-        return 'Not fetched yet';
+        return '—';
     }
 
     return new Intl.DateTimeFormat('en-GB', {

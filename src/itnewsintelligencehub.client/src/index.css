@@ -222,3 +222,48 @@ code {
         padding: 14px 0;
     }
 }
+
+.source-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+}
+
+.import-status-badge {
+    display: inline-flex;
+    border-radius: 999px;
+    padding: 4px 8px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.import-status-success {
+    color: #027a48;
+    background: #ecfdf3;
+}
+
+.import-status-failed {
+    color: #b42318;
+    background: #fef3f2;
+}
+
+.import-status-pending {
+    color: #6941c6;
+    background: #f9f5ff;
+}
+
+.inactive-note {
+    color: #667085;
+    font-size: 0.8rem;
+}
+
+.import-error-message {
+    max-width: 260px;
+    margin: 10px 0 0;
+    color: #b42318;
+    font-size: 0.8rem;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+}

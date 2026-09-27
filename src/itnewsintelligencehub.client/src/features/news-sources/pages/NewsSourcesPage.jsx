@@ -1,80 +1,56 @@
-import { useEffect, useState } from 'react';
-import {
-    createNewsSource,
-    fetchNewsSource,
-    getNewsSources,
-} from '../api/newsSourcesApi';
+import { useState } from 'react';
 import { NewsSourceForm } from '../components/NewsSourceForm';
 import { NewsSourcesTable } from '../components/NewsSourcesTable';
+import { useCreateNewsSource } from '../hooks/useCreateNewsSource';
+import { useFetchNewsSource } from '../hooks/useFetchNewsSource';
+import { useNewsSources } from '../hooks/useNewsSources';
 
 export function NewsSourcesPage() {
-    const [sources, setSources] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
     const [isFormVisible, setIsFormVisible] = useState(false);
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const [errorMessage, setErrorMessage] = useState(null);
-    const [fetchingSourceId, setFetchingSourceId] = useState(null);
     const [successMessage, setSuccessMessage] = useState(null);
 
-    useEffect(() => {
-        void loadSources();
-    }, []);
+    const {
+        data: sources = [],
+        isPending,
+        error,
+        refetch,
+    } = useNewsSources();
 
-    async function loadSources() {
-        setIsLoading(true);
-        setErrorMessage(null);
-
-        try {
-            const response = await getNewsSources();
-            setSources(response);
-        } catch (error) {
-            setErrorMessage(getErrorMessage(error));
-        } finally {
-            setIsLoading(false);
-        }
-    }
+    const createSourceMutation = useCreateNewsSource();
+    const fetchSourceMutation = useFetchNewsSource();
 
     async function handleCreateSource(request) {
-        setIsSubmitting(true);
-        setErrorMessage(null);
+        setSuccessMessage(null);
 
         try {
-            const createdSource = await createNewsSource(request);
-
-            setSources((current) =>
-                [...current, createdSource].sort((left, right) =>
-                    left.name.localeCompare(right.name),
-                ),
-            );
+            await createSourceMutation.mutateAsync(request);
 
             setIsFormVisible(false);
-        } catch (error) {
-            setErrorMessage(getErrorMessage(error));
-        } finally {
-            setIsSubmitting(false);
+            setSuccessMessage('News source was added successfully.');
+        } catch {
+            // Error is rendered below from mutation state.
         }
     }
 
     async function handleFetchSource(sourceId) {
-        setFetchingSourceId(sourceId);
-        setErrorMessage(null);
         setSuccessMessage(null);
 
         try {
-            const result = await fetchNewsSource(sourceId);
+            const result = await fetchSourceMutation.mutateAsync(sourceId);
 
             setSuccessMessage(
                 `Import completed: ${result.importedItemsCount} new item(s) imported, `
                 + `${result.skippedItemsCount} existing item(s) skipped.`,
             );
-
-            await loadSources();
-        } catch (error) {
-            setErrorMessage(getErrorMessage(error));
-        } finally {
-            setFetchingSourceId(null);
+        } catch {
+            // Error is rendered below from mutation state.
         }
     }
+
+    const errorMessage =
+        getErrorMessage(createSourceMutation.error)
+        ?? getErrorMessage(fetchSourceMutation.error)
+        ?? getErrorMessage(error);
 
     return (
         <main className="page-shell">
@@ -92,7 +68,10 @@ export function NewsSourcesPage() {
                     <button
                         className="button button-primary"
                         type="button"
-                        onClick={() => setIsFormVisible(true)}
+                        onClick={() => {
+                            setIsFormVisible(true);
+                            setSuccessMessage(null);
+                        }}
                     >
                         Add source
                     </button>
@@ -110,7 +89,7 @@ export function NewsSourcesPage() {
                         className="button button-secondary"
                         type="button"
                         onClick={() => {
-                            void loadSources();
+                            void refetch();
                         }}
                     >
                         Try again
@@ -121,7 +100,7 @@ export function NewsSourcesPage() {
             {successMessage && (
                 <section className="alert alert-success" role="status">
                     <div>
-                        <strong>Feed import completed.</strong>
+                        <strong>Success.</strong>
                         <p>{successMessage}</p>
                     </div>
                 </section>
@@ -130,7 +109,7 @@ export function NewsSourcesPage() {
             {isFormVisible && (
                 <section className="content-card">
                     <NewsSourceForm
-                        isSubmitting={isSubmitting}
+                        isSubmitting={createSourceMutation.isPending}
                         onSubmit={handleCreateSource}
                         onCancel={() => setIsFormVisible(false)}
                     />
@@ -150,22 +129,26 @@ export function NewsSourcesPage() {
                         className="button button-secondary"
                         type="button"
                         onClick={() => {
-                            void loadSources();
+                            void refetch();
                         }}
-                        disabled={isLoading}
+                        disabled={isPending}
                     >
-                        {isLoading ? 'Loading...' : 'Refresh'}
+                        {isPending ? 'Loading...' : 'Refresh'}
                     </button>
                 </div>
 
-                {isLoading ? (
+                {isPending ? (
                     <div className="loading-state">Loading sources...</div>
                 ) : (
-                        <NewsSourcesTable
-                            sources={sources}
-                            fetchingSourceId={fetchingSourceId}
-                            onFetch={handleFetchSource}
-                        />
+                    <NewsSourcesTable
+                        sources={sources}
+                        fetchingSourceId={
+                            fetchSourceMutation.isPending
+                                ? fetchSourceMutation.variables
+                                : null
+                        }
+                        onFetch={handleFetchSource}
+                    />
                 )}
             </section>
         </main>
@@ -173,8 +156,8 @@ export function NewsSourcesPage() {
 }
 
 function getErrorMessage(error) {
-    if (error instanceof ApiError) {
-        return error.message;
+    if (!error) {
+        return null;
     }
 
     if (error instanceof Error) {

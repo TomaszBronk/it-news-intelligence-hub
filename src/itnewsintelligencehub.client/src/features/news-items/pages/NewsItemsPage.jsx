@@ -36,7 +36,7 @@ export function NewsItemsPage() {
                     <p className="eyebrow">IT News Intelligence Hub</p>
                     <h1>Imported news</h1>
                     <p className="page-description">
-                        News collected from configured RSS and Atom sources.
+                        News collected from configured RSS and Atom sources. The list refreshes automatically every minute.
                     </p>
                 </div>
 

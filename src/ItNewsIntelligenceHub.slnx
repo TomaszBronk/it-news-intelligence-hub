@@ -1,4 +1,7 @@
 <Solution>
+  <Folder Name="/tests/">
+    <Project Path="tests/ItNewsIntelligenceHub.Application.Tests/ItNewsIntelligenceHub.Application.Tests.csproj" Id="db0dee71-0fcd-4a59-9846-91107e58a1b6" />
+  </Folder>
   <Project Path="ItNewsIntelligenceHub.Application/ItNewsIntelligenceHub.Application.csproj" />
   <Project Path="itnewsintelligencehub.client/ItNewsIntelligenceHub.Client.esproj">
     <Build />

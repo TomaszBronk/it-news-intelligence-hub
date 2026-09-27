@@ -267,3 +267,9 @@ code {
     line-height: 1.4;
     overflow-wrap: anywhere;
 }
+
+.refresh-status {
+    margin-top: 4px;
+    color: #667085;
+    font-size: 0.8rem;
+}

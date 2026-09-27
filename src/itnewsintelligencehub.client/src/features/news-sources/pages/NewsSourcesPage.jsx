@@ -12,6 +12,7 @@ export function NewsSourcesPage() {
     const {
         data: sources = [],
         isPending,
+        isFetching,
         error,
         refetch,
     } = useNewsSources();
@@ -60,7 +61,7 @@ export function NewsSourcesPage() {
                     <h1>News sources</h1>
                     <p className="page-description">
                         Configure RSS and Atom feeds used to collect IT news for your
-                        personal briefing.
+                        personal briefing. Import status refreshes automatically every 30 seconds.
                     </p>
                 </div>
 
@@ -91,8 +92,9 @@ export function NewsSourcesPage() {
                         onClick={() => {
                             void refetch();
                         }}
+                        disabled={isFetching}
                     >
-                        Try again
+                        {isFetching ? 'Refreshing...' : 'Refresh'}
                     </button>
                 </section>
             )}
@@ -124,6 +126,10 @@ export function NewsSourcesPage() {
                             {sources.length} {sources.length === 1 ? 'source' : 'sources'}
                         </p>
                     </div>
+
+                    <p className="refresh-status">
+                        {isFetching ? 'Refreshing data...' : 'Auto-refresh: every 30 seconds'}
+                    </p>
 
                     <button
                         className="button button-secondary"

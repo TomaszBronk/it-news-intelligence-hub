@@ -1,5 +1,4 @@
-﻿using ItNewsIntelligenceHub.Application.Feeds;
-using ItNewsIntelligenceHub.Application.NewsSources.Commands.FetchNewsSource;
+﻿using ItNewsIntelligenceHub.Application.NewsSources.Commands.FetchNewsSource;
 using ItNewsIntelligenceHub.Domain.Entities;
 using ItNewsIntelligenceHub.Infrastructure.Persistence;
 using ItNewsIntelligenceHub.Server.Contracts.NewsSources;
@@ -29,7 +28,10 @@ public class NewsSourcesController(NewsHubDbContext dbContext, IFetchNewsSourceH
                 source.Category,
                 source.IsActive,
                 source.CreatedAtUtc,
-                source.LastFetchedAtUtc))
+                source.LastFetchedAtUtc,
+                source.LastSuccessfulFetchAtUtc,
+                source.LastFetchAttemptAtUtc,
+                source.LastFetchError))
             .ToListAsync(cancellationToken);
 
         return Ok(sources);
@@ -53,7 +55,10 @@ public class NewsSourcesController(NewsHubDbContext dbContext, IFetchNewsSourceH
                 item.Category,
                 item.IsActive,
                 item.CreatedAtUtc,
-                item.LastFetchedAtUtc))
+                item.LastFetchedAtUtc,
+                item.LastSuccessfulFetchAtUtc,
+                item.LastFetchAttemptAtUtc,
+                item.LastFetchError))
             .SingleOrDefaultAsync(cancellationToken);
 
         return source is null ? NotFound() : Ok(source);
@@ -217,5 +222,8 @@ public class NewsSourcesController(NewsHubDbContext dbContext, IFetchNewsSourceH
             source.Category,
             source.IsActive,
             source.CreatedAtUtc,
-            source.LastFetchedAtUtc);
+            source.LastFetchedAtUtc,
+            source.LastSuccessfulFetchAtUtc,
+            source.LastFetchAttemptAtUtc,
+            source.LastFetchError);
 }

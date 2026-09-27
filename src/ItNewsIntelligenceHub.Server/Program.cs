@@ -1,6 +1,8 @@
-using Microsoft.EntityFrameworkCore;
 using ItNewsIntelligenceHub.Application;
 using ItNewsIntelligenceHub.Infrastructure;
+using ItNewsIntelligenceHub.Server.BackgroundServices;
+using ItNewsIntelligenceHub.Server.Configuration;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +18,18 @@ var connectionString = builder.Configuration.GetConnectionString("NewsHubDatabas
     ?? throw new InvalidOperationException(
         "Connection string 'NewsHubDatabase' was not found.");
 
+builder.Services
+    .AddOptions<FeedImportOptions>()
+    .Bind(builder.Configuration.GetSection(FeedImportOptions.SectionName))
+    .Validate(
+        options => options.IntervalMinutes >= 1,
+        "FeedImport:IntervalMinutes must be at least 1.")
+    .ValidateOnStart();
+
+builder.Services.AddHostedService<NewsFeedImportBackgroundService>();
+
+builder.Services.AddHealthChecks();
+
 
 var app = builder.Build();
 
@@ -30,6 +44,7 @@ if (app.Environment.IsDevelopment())
     });
 }
 
+app.MapHealthChecks("/health");
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
@@ -47,7 +62,8 @@ app.MapFallback(async context =>
     // Nie fallback dla API, OpenAPI, Swagger
     if (path.StartsWith("/api", StringComparison.OrdinalIgnoreCase) ||
         path.StartsWith("/openapi", StringComparison.OrdinalIgnoreCase) ||
-        path.StartsWith("/swagger", StringComparison.OrdinalIgnoreCase))
+        path.StartsWith("/swagger", StringComparison.OrdinalIgnoreCase) ||
+        path.StartsWith("/health", StringComparison.OrdinalIgnoreCase))
     {
         context.Response.StatusCode = StatusCodes.Status404NotFound;
         return;

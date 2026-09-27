@@ -4,16 +4,19 @@ using ItNewsIntelligenceHub.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace ItNewsIntelligenceHub.Server.Migrations
+namespace ItNewsIntelligenceHub.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(NewsHubDbContext))]
-    partial class NewsHubDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260927164049_AddNewsSourceImportStatus")]
+    partial class AddNewsSourceImportStatus
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -22,7 +25,7 @@ namespace ItNewsIntelligenceHub.Server.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("ItNewsIntelligenceHub.Server.Domain.Entities.NewsItem", b =>
+            modelBuilder.Entity("ItNewsIntelligenceHub.Domain.Entities.NewsItem", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -83,7 +86,7 @@ namespace ItNewsIntelligenceHub.Server.Migrations
                     b.ToTable("NewsItems", (string)null);
                 });
 
-            modelBuilder.Entity("ItNewsIntelligenceHub.Server.Domain.Entities.NewsSource", b =>
+            modelBuilder.Entity("ItNewsIntelligenceHub.Domain.Entities.NewsSource", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -105,7 +108,17 @@ namespace ItNewsIntelligenceHub.Server.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
+                    b.Property<DateTime?>("LastFetchAttemptAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("LastFetchError")
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
                     b.Property<DateTime?>("LastFetchedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("LastSuccessfulFetchAtUtc")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
@@ -125,9 +138,9 @@ namespace ItNewsIntelligenceHub.Server.Migrations
                     b.ToTable("NewsSources", (string)null);
                 });
 
-            modelBuilder.Entity("ItNewsIntelligenceHub.Server.Domain.Entities.NewsItem", b =>
+            modelBuilder.Entity("ItNewsIntelligenceHub.Domain.Entities.NewsItem", b =>
                 {
-                    b.HasOne("ItNewsIntelligenceHub.Server.Domain.Entities.NewsSource", "Source")
+                    b.HasOne("ItNewsIntelligenceHub.Domain.Entities.NewsSource", "Source")
                         .WithMany("NewsItems")
                         .HasForeignKey("SourceId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -136,7 +149,7 @@ namespace ItNewsIntelligenceHub.Server.Migrations
                     b.Navigation("Source");
                 });
 
-            modelBuilder.Entity("ItNewsIntelligenceHub.Server.Domain.Entities.NewsSource", b =>
+            modelBuilder.Entity("ItNewsIntelligenceHub.Domain.Entities.NewsSource", b =>
                 {
                     b.Navigation("NewsItems");
                 });

@@ -8,4 +8,7 @@ public record NewsSourceResponse(
     string Category,
     bool IsActive,
     DateTime CreatedAtUtc,
-    DateTime? LastFetchedAtUtc);
+    DateTime? LastFetchedAtUtc,
+    DateTime? LastSuccessfulFetchAtUtc,
+    DateTime? LastFetchAttemptAtUtc,
+    string? LastFetchError);

@@ -19,7 +19,6 @@ public sealed class NewsSourceRepository(NewsHubDbContext dbContext)
         CancellationToken cancellationToken)
     {
         return await dbContext.NewsSources
-            .AsNoTracking()
             .OrderBy(source => source.Name)
             .ToListAsync(cancellationToken);
     }

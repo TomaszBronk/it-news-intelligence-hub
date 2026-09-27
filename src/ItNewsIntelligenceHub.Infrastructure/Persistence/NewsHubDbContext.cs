@@ -37,6 +37,9 @@ public class NewsHubDbContext(DbContextOptions<NewsHubDbContext> options)
         newsSource.HasIndex(source => source.FeedUrl)
             .IsUnique();
 
+        newsSource.Property(source => source.LastFetchError)
+            .HasMaxLength(2000);
+
         var newsItem = modelBuilder.Entity<NewsItem>();
 
         newsItem.ToTable("NewsItems");

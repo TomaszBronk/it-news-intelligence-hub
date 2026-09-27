@@ -167,7 +167,9 @@ public class NewsSourcesController(NewsHubDbContext dbContext, IFetchNewsSourceH
     }
 
     [HttpPost("{id:guid}/fetch")]
-    [ProducesResponseType(typeof(FetchNewsSourceResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(
+    typeof(FetchNewsSourceResult),
+    StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     [ProducesResponseType(StatusCodes.Status502BadGateway)]
@@ -175,42 +177,11 @@ public class NewsSourcesController(NewsHubDbContext dbContext, IFetchNewsSourceH
     Guid id,
     CancellationToken cancellationToken)
     {
-        try
-        {
-            var result = await fetchNewsSourceHandler.HandleAsync(
-                new FetchNewsSourceCommand(id),
-                cancellationToken);
+        var result = await fetchNewsSourceHandler.HandleAsync(
+            new FetchNewsSourceCommand(id),
+            cancellationToken);
 
-            return Ok(result);
-        }
-        catch (KeyNotFoundException)
-        {
-            return NotFound();
-        }
-        catch (InvalidOperationException exception)
-        {
-            return Conflict(new { message = exception.Message });
-        }
-        catch (HttpRequestException exception)
-        {
-            return StatusCode(
-                StatusCodes.Status502BadGateway,
-                new
-                {
-                    message = "The RSS/Atom feed could not be downloaded.",
-                    detail = exception.Message
-                });
-        }
-        catch (System.Xml.XmlException exception)
-        {
-            return StatusCode(
-                StatusCodes.Status502BadGateway,
-                new
-                {
-                    message = "The RSS/Atom feed contains invalid XML.",
-                    detail = exception.Message
-                });
-        }
+        return Ok(result);
     }
 
     private static NewsSourceResponse ToResponse(NewsSource source) =>

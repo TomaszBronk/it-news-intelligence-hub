@@ -4,6 +4,7 @@ using ItNewsIntelligenceHub.Application.Abstractions.Time;
 using ItNewsIntelligenceHub.Application.NewsSources.Commands.FetchNewsSource;
 using ItNewsIntelligenceHub.Domain.Entities;
 using NSubstitute;
+using ItNewsIntelligenceHub.Application.Common.Exceptions;
 
 namespace ItNewsIntelligenceHub.Application.Tests.NewsSources.Commands.FetchNewsSource;
 
@@ -126,7 +127,7 @@ public class FetchNewsSourceHandlerTests
             CancellationToken.None);
 
         // Assert
-        var exception = await Assert.ThrowsAsync<InvalidOperationException>(action);
+        var exception = await Assert.ThrowsAsync<ConflictException>(action);
 
         Assert.Contains("inactive", exception.Message, StringComparison.OrdinalIgnoreCase);
 
@@ -159,7 +160,7 @@ public class FetchNewsSourceHandlerTests
             CancellationToken.None);
 
         // Assert
-        await Assert.ThrowsAsync<KeyNotFoundException>(action);
+        await Assert.ThrowsAsync<NotFoundException>(action);
 
         await fixture.RssFeedReader.DidNotReceive()
             .ReadAsync(Arg.Any<Uri>(), Arg.Any<CancellationToken>());

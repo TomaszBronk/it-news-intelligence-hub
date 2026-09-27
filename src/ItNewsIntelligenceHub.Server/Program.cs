@@ -3,6 +3,7 @@ using ItNewsIntelligenceHub.Infrastructure;
 using ItNewsIntelligenceHub.Server.BackgroundServices;
 using ItNewsIntelligenceHub.Server.Configuration;
 using Microsoft.EntityFrameworkCore;
+using ItNewsIntelligenceHub.Server.ExceptionHandling;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,6 +31,10 @@ builder.Services.AddHostedService<NewsFeedImportBackgroundService>();
 
 builder.Services.AddHealthChecks();
 
+builder.Services.AddProblemDetails();
+
+builder.Services.AddExceptionHandler<ApiExceptionHandler>();
+
 
 var app = builder.Build();
 
@@ -45,6 +50,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.MapHealthChecks("/health");
+app.UseExceptionHandler();
+
 app.UseHttpsRedirection();
 
 app.UseAuthorization();

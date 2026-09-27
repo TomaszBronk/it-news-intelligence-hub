@@ -4,6 +4,7 @@ using ItNewsIntelligenceHub.Application.Abstractions.Feeds;
 using ItNewsIntelligenceHub.Application.Abstractions.Persistence;
 using ItNewsIntelligenceHub.Application.Abstractions.Time;
 using ItNewsIntelligenceHub.Domain.Entities;
+using ItNewsIntelligenceHub.Application.Common.Exceptions;
 
 namespace ItNewsIntelligenceHub.Application.NewsSources.Commands.FetchNewsSource;
 
@@ -21,21 +22,21 @@ public sealed class FetchNewsSourceHandler(
         var source = await newsSourceRepository.GetByIdAsync(
             command.SourceId,
             cancellationToken)
-            ?? throw new KeyNotFoundException(
-                $"News source with ID '{command.SourceId}' was not found.");
+            ?? throw new NotFoundException(
+    $"News source with ID '{command.SourceId}' was not found.");
 
         if (!source.IsActive)
         {
-            throw new InvalidOperationException(
-                $"News source '{source.Name}' is inactive and cannot be fetched.");
+            throw new ConflictException(
+    $"News source '{source.Name}' is inactive and cannot be fetched.");
         }
 
         if (!Uri.TryCreate(source.FeedUrl, UriKind.Absolute, out var feedUrl)
             || (feedUrl.Scheme != Uri.UriSchemeHttp
                 && feedUrl.Scheme != Uri.UriSchemeHttps))
         {
-            throw new InvalidOperationException(
-                $"News source '{source.Name}' has an invalid feed URL.");
+            throw new ConflictException(
+    $"News source '{source.Name}' has an invalid feed URL.");
         }
 
         var fetchedItems = await rssFeedReader.ReadAsync(feedUrl, cancellationToken);

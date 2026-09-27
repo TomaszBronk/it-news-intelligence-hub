@@ -29,7 +29,7 @@ Important technology news is spread across many sources. This application helps 
 - Data access: Entity Framework Core
 - Background processing: .NET BackgroundService
 - Documentation: OpenAPI / Swagger
-- Testing: xUnit and integration tests
+- Testing: xUnit unit tests for application use cases
 - DevOps: Docker Compose and GitHub Actions
 - Cloud target: Microsoft Azure
 
@@ -61,6 +61,11 @@ Detailed setup instructions will be added with the first MVP milestone.
 - [ ] Add editable post drafts
 - [ ] Add tests and CI
 - [ ] Deploy to Azure
+
+- [x] Add unit tests for RSS feed import use case
+- [ ] Add API integration tests
+- [ ] Add frontend component tests
+- [ ] Add GitHub Actions CI workflow
 
 ## Author
 

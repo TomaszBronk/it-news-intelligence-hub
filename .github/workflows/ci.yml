@@ -26,13 +26,13 @@ jobs:
           global-json-file: global.json
 
       - name: Restore .NET dependencies
-        run: dotnet restore ItNewsIntelligenceHub.sln
+        run: dotnet restore src/ItNewsIntelligenceHub.slnx
 
       - name: Build .NET solution
-        run: dotnet build ItNewsIntelligenceHub.sln --configuration Release --no-restore
+        run: dotnet build src/ItNewsIntelligenceHub.slnx --configuration Release --no-restore
 
       - name: Run .NET tests
-        run: dotnet test ItNewsIntelligenceHub.sln --configuration Release --no-build --verbosity normal
+        run: dotnet test src/ItNewsIntelligenceHub.slnx --configuration Release --no-build --verbosity normal
 
   frontend:
     name: Frontend — build
@@ -49,7 +49,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v7
         with:
-          node-version: 22
+          node-version: 22.21.1
           cache: npm
           cache-dependency-path: src/ItNewsIntelligenceHub.Client/package-lock.json
 

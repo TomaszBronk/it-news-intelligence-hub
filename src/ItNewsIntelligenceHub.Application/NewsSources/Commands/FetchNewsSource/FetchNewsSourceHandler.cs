@@ -86,7 +86,11 @@ public sealed class FetchNewsSourceHandler(
             existingOriginalUrls.Add(fetchedItem.OriginalUrl);
         }
 
-        await newsItemRepository.AddRangeAsync(itemsToAdd, cancellationToken);
+        if (itemsToAdd.Count > 0)
+        {
+            await newsItemRepository.AddRangeAsync(itemsToAdd, cancellationToken);
+        }    
+
 
         source.LastFetchedAtUtc = clock.UtcNow;
 

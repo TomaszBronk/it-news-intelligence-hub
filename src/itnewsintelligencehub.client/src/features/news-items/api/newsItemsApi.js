@@ -32,4 +32,5 @@ export async function updateNewsItemStatus({ id, status }) {
     });
 
     return response.data;
+
 }

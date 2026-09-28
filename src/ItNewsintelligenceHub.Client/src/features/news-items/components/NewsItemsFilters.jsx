@@ -1,224 +1,182 @@
 import { useState } from 'react';
+import { createEmptyFilters, normalizeFilters } from '../model/newsItemsFilters';
 
 const categories = [
-  '',
-  'DotNet',
-  'Azure',
-  'AI',
-  'Security',
-  'React',
-  'DevOps',
-  'Data',
-  'Other',
+    'DotNet',
+    'Azure',
+    'AI',
+    'Security',
+    'React',
+    'DevOps',
+    'Data',
+    'Other',
 ];
 
 const statuses = [
-  '',
-  'New',
-  'Read',
-  'Saved',
-  'Dismissed',
+    'New',
+    'Read',
+    'Saved',
+    'Dismissed',
 ];
 
 export function NewsItemsFilters({
-  sources,
-  initialFilters,
-  onApply,
-  onReset,
-  isLoading,
-})
-{
-
+    sources,
+    initialFilters,
+    onApply,
+    onReset,
+    isLoading,
+}) {
     const [filters, setFilters] = useState(() => ({
         ...initialFilters,
     }));
 
-  function handleSubmit(event) {
-    event.preventDefault();
+    function handleSubmit(event) {
+        event.preventDefault();
 
-    onApply(normalizeFilters(filters));
-  }
+        onApply(normalizeFilters(filters));
+    }
 
-  function handleReset() {
-    const emptyFilters = createEmptyFilters();
+    function handleReset() {
+        const emptyFilters = createEmptyFilters();
 
-    setFilters(emptyFilters);
-    onReset(emptyFilters);
-  }
+        setFilters(emptyFilters);
+        onReset(emptyFilters);
+    }
 
-  return (
-    <form className="news-filters" onSubmit={handleSubmit}>
-      <div className="filters-grid">
-        <label>
-          <span>Search title</span>
-          <input
-            type="search"
-            value={filters.search}
-            placeholder="e.g. Azure, .NET, React"
-            onChange={(event) =>
-              setFilters((current) => ({
-                ...current,
-                search: event.target.value,
-              }))
-            }
-            disabled={isLoading}
-          />
-        </label>
+    return (
+        <form className="news-filters" onSubmit={handleSubmit}>
+            <div className="filters-grid">
+                <label>
+                    <span>Search title</span>
+                    <input
+                        type="search"
+                        value={filters.search}
+                        placeholder="e.g. Azure, .NET, React"
+                        onChange={(event) =>
+                            setFilters((current) => ({
+                                ...current,
+                                search: event.target.value,
+                            }))
+                        }
+                        disabled={isLoading}
+                    />
+                </label>
 
-        <label>
-          <span>Status</span>
-          <select
-            value={filters.status}
-            onChange={(event) =>
-              setFilters((current) => ({
-                ...current,
-                status: event.target.value,
-              }))
-            }
-            disabled={isLoading}
-          >
-            <option value="">All statuses</option>
+                <label>
+                    <span>Status</span>
+                    <select
+                        value={filters.status}
+                        onChange={(event) =>
+                            setFilters((current) => ({
+                                ...current,
+                                status: event.target.value,
+                            }))
+                        }
+                        disabled={isLoading}
+                    >
+                        <option value="">All statuses</option>
 
-            {statuses
-              .filter(Boolean)
-              .map((status) => (
-                <option key={status} value={status}>
-                  {status}
-                </option>
-              ))}
-          </select>
-        </label>
+                        {statuses.map((status) => (
+                            <option key={status} value={status}>
+                                {status}
+                            </option>
+                        ))}
+                    </select>
+                </label>
 
-        <label>
-          <span>Category</span>
-          <select
-            value={filters.category}
-            onChange={(event) =>
-              setFilters((current) => ({
-                ...current,
-                category: event.target.value,
-              }))
-            }
-            disabled={isLoading}
-          >
-            <option value="">All categories</option>
+                <label>
+                    <span>Category</span>
+                    <select
+                        value={filters.category}
+                        onChange={(event) =>
+                            setFilters((current) => ({
+                                ...current,
+                                category: event.target.value,
+                            }))
+                        }
+                        disabled={isLoading}
+                    >
+                        <option value="">All categories</option>
 
-            {categories
-              .filter(Boolean)
-              .map((category) => (
-                <option key={category} value={category}>
-                  {category}
-                </option>
-              ))}
-          </select>
-        </label>
+                        {categories.map((category) => (
+                            <option key={category} value={category}>
+                                {category}
+                            </option>
+                        ))}
+                    </select>
+                </label>
 
-        <label>
-          <span>Source</span>
-          <select
-            value={filters.sourceId}
-            onChange={(event) =>
-              setFilters((current) => ({
-                ...current,
-                sourceId: event.target.value,
-              }))
-            }
-            disabled={isLoading}
-          >
-            <option value="">All sources</option>
+                <label>
+                    <span>Source</span>
+                    <select
+                        value={filters.sourceId}
+                        onChange={(event) =>
+                            setFilters((current) => ({
+                                ...current,
+                                sourceId: event.target.value,
+                            }))
+                        }
+                        disabled={isLoading}
+                    >
+                        <option value="">All sources</option>
 
-            {sources.map((source) => (
-              <option key={source.id} value={source.id}>
-                {source.name}
-              </option>
-            ))}
-          </select>
-        </label>
+                        {sources.map((source) => (
+                            <option key={source.id} value={source.id}>
+                                {source.name}
+                            </option>
+                        ))}
+                    </select>
+                </label>
 
-        <label>
-          <span>Published from</span>
-          <input
-            type="date"
-            value={filters.publishedFromUtc}
-            onChange={(event) =>
-              setFilters((current) => ({
-                ...current,
-                publishedFromUtc: event.target.value,
-              }))
-            }
-            disabled={isLoading}
-          />
-        </label>
+                <label>
+                    <span>Published from</span>
+                    <input
+                        type="date"
+                        value={filters.publishedFromUtc}
+                        onChange={(event) =>
+                            setFilters((current) => ({
+                                ...current,
+                                publishedFromUtc: event.target.value,
+                            }))
+                        }
+                        disabled={isLoading}
+                    />
+                </label>
 
-        <label>
-          <span>Published to</span>
-          <input
-            type="date"
-            value={filters.publishedToUtc}
-            onChange={(event) =>
-              setFilters((current) => ({
-                ...current,
-                publishedToUtc: event.target.value,
-              }))
-            }
-            disabled={isLoading}
-          />
-        </label>
-      </div>
+                <label>
+                    <span>Published to</span>
+                    <input
+                        type="date"
+                        value={filters.publishedToUtc}
+                        onChange={(event) =>
+                            setFilters((current) => ({
+                                ...current,
+                                publishedToUtc: event.target.value,
+                            }))
+                        }
+                        disabled={isLoading}
+                    />
+                </label>
+            </div>
 
-      <div className="filter-actions">
-        <button
-          className="button button-primary"
-          type="submit"
-          disabled={isLoading}
-        >
-          Apply filters
-        </button>
+            <div className="filter-actions">
+                <button
+                    className="button button-primary"
+                    type="submit"
+                    disabled={isLoading}
+                >
+                    Apply filters
+                </button>
 
-        <button
-          className="button button-secondary"
-          type="button"
-          onClick={handleReset}
-          disabled={isLoading}
-        >
-          Reset
-        </button>
-      </div>
-    </form>
-  );
-}
-
-export function createEmptyFilters() {
-  return {
-    sourceId: '',
-    category: '',
-    status: '',
-    publishedFromUtc: '',
-    publishedToUtc: '',
-    search: '',
-    page: 1,
-    pageSize: 50,
-  };
-}
-
-function normalizeFilters(filters) {
-  return {
-    ...filters,
-    sourceId: filters.sourceId || undefined,
-    category: filters.category || undefined,
-    status: filters.status || undefined,
-    publishedFromUtc: toStartOfDayUtc(filters.publishedFromUtc),
-    publishedToUtc: toEndOfDayUtc(filters.publishedToUtc),
-    search: filters.search.trim() || undefined,
-    page: 1,
-    pageSize: 50,
-  };
-}
-
-function toStartOfDayUtc(value) {
-  return value ? `${value}T00:00:00Z` : undefined;
-}
-
-function toEndOfDayUtc(value) {
-  return value ? `${value}T23:59:59.999Z` : undefined;
+                <button
+                    className="button button-secondary"
+                    type="button"
+                    onClick={handleReset}
+                    disabled={isLoading}
+                >
+                    Reset
+                </button>
+            </div>
+        </form>
+    );
 }

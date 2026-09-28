@@ -1,9 +1,11 @@
 import { useState } from 'react';
-import { NewsItemsFilters, createEmptyFilters } from '../components/NewsItemsFilters';
 import { NewsItemsList } from '../components/NewsItemsList';
+import { NewsItemsFilters } from '../components/NewsItemsFilters';
+import { createEmptyFilters } from '../model/newsItemsFilters'
 import { useNewsItems } from '../hooks/useNewsItems';
 import { useUpdateNewsItemStatus } from '../hooks/useUpdateNewsItemStatus';
 import { useNewsSources } from '../../news-sources/hooks/useNewsSources';
+
 
 export function NewsItemsPage() {
     const [filters, setFilters] = useState(createEmptyFilters());

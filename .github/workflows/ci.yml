@@ -40,7 +40,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: src/itnewsintelligencehub.client
+        working-directory: src/ItNewsIntelligenceHub.Client
 
     steps:
       - name: Checkout repository
@@ -51,7 +51,7 @@ jobs:
         with:
           node-version: 22.21.1
           cache: npm
-          cache-dependency-path: src/itnewsintelligencehub.client/package-lock.json
+          cache-dependency-path: src/ItNewsIntelligenceHub.Client/package-lock.json
 
       - name: Install frontend dependencies
         run: npm ci

@@ -1,10 +1,121 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Net;
+using System.Net.Http.Json;
+using ItNewsIntelligenceHub.Domain.Entities;
+using ItNewsIntelligenceHub.Domain.Enums;
+using ItNewsIntelligenceHub.Server.IntegrationTests.Infrastructure;
 
-namespace ItNewsIntelligenceHub.Server.IntegrationTests.NewsItems
+namespace ItNewsIntelligenceHub.Server.IntegrationTests.NewsItems;
+
+public sealed class NewsItemsApiTests(
+    CustomWebApplicationFactory factory)
+    : IClassFixture<CustomWebApplicationFactory>
 {
-    internal class NewsItemsApiTests
+    private readonly HttpClient _client = factory.CreateClient();
+
+    [Fact]
+    public async Task UpdateStatus_WhenItemExists_ReturnsUpdatedItemWithStringStatus()
     {
+        // Arrange
+        var source = CreateSource();
+        var item = CreateNewsItem(
+            source,
+            title: "Azure update",
+            status: NewsItemStatus.New);
+
+        await factory.SeedAsync(source, item);
+
+        var request = new UpdateNewsItemStatusRequest("Saved");
+
+        // Act
+        var response = await _client.PatchAsJsonAsync(
+            $"/api/news-items/{item.Id}/status",
+            request);
+
+        // Assert
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+        var responseJson = await response.Content.ReadAsStringAsync();
+
+        Assert.Contains("\"status\":\"Saved\"", responseJson);
+
+        var updatedItem = await response.Content
+            .ReadFromJsonAsync<NewsItemResponse>();
+
+        Assert.NotNull(updatedItem);
+        Assert.Equal(item.Id, updatedItem.Id);
+        Assert.Equal("Saved", updatedItem.Status);
     }
+
+
+    [Fact]
+    public async Task UpdateStatus_WhenItemDoesNotExist_ReturnsNotFound()
+    {
+        // Arrange
+        var request = new UpdateNewsItemStatusRequest("Read");
+
+        // Act
+        var response = await _client.PatchAsJsonAsync(
+            $"/api/news-items/{Guid.NewGuid()}/status",
+            request);
+
+        // Assert
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
+
+    private static NewsSource CreateSource()
+    {
+        var sourceId = Guid.NewGuid();
+
+        return new NewsSource
+        {
+            Id = sourceId,
+            Name = $"Test Source {sourceId:N}",
+            FeedUrl = $"https://example.test/{sourceId:N}/feed.xml",
+            WebsiteUrl = "https://example.test/",
+            Category = "DotNet",
+            IsActive = true,
+            CreatedAtUtc = DateTime.UtcNow
+        };
+    }
+
+    private static NewsItem CreateNewsItem(
+        NewsSource source,
+        string title,
+        NewsItemStatus status)
+    {
+        var itemId = Guid.NewGuid();
+
+        return new NewsItem
+        {
+            Id = itemId,
+            SourceId = source.Id,
+            Source = source,
+            ExternalId = $"entry-{itemId:N}",
+            Title = title,
+            Summary = $"Summary for {title}",
+            OriginalUrl = $"https://example.test/news/{itemId:N}",
+            Author = "Integration Test",
+            PublishedAtUtc = DateTimeOffset.UtcNow,
+            RetrievedAtUtc = DateTimeOffset.UtcNow,
+            ContentHash = Guid.NewGuid().ToString("N"),
+            Category = source.Category,
+            Status = status
+        };
+    }
+
+    private sealed record UpdateNewsItemStatusRequest(
+        string Status);
+
+    private sealed record NewsItemResponse(
+        Guid Id,
+        Guid SourceId,
+        string SourceName,
+        string Title,
+        string? Summary,
+        string OriginalUrl,
+        string? Author,
+        DateTimeOffset? PublishedAtUtc,
+        DateTimeOffset RetrievedAtUtc,
+        string Category,
+        string Status);
 }

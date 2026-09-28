@@ -1,4 +1,5 @@
-﻿using ItNewsIntelligenceHub.Infrastructure.Persistence;
+﻿using ItNewsIntelligenceHub.Domain.Entities;
+using ItNewsIntelligenceHub.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Data.Sqlite;
@@ -13,6 +14,26 @@ namespace ItNewsIntelligenceHub.Server.IntegrationTests.Infrastructure;
 public sealed class CustomWebApplicationFactory
     : WebApplicationFactory<Program>
 {
+
+    public async Task SeedAsync(
+       NewsSource source,
+       params NewsItem[] newsItems)
+    {
+        await using var scope = Services.CreateAsyncScope();
+
+        var dbContext = scope.ServiceProvider
+            .GetRequiredService<NewsHubDbContext>();
+
+        dbContext.NewsSources.Add(source);
+
+        if (newsItems.Length > 0)
+        {
+            dbContext.NewsItems.AddRange(newsItems);
+        }
+
+        await dbContext.SaveChangesAsync();
+    }
+
     private readonly SqliteConnection _connection =
         new("Data Source=:memory:");
 

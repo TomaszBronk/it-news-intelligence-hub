@@ -1,5 +1,6 @@
 ﻿using ItNewsIntelligenceHub.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ItNewsIntelligenceHub.Infrastructure.Persistence;
 
@@ -89,5 +90,6 @@ public class NewsHubDbContext(DbContextOptions<NewsHubDbContext> options)
             .IsUnique();
 
         newsItem.HasIndex(item => item.PublishedAtUtc);
+
     }
 }

@@ -1,11 +1,17 @@
-export function NewsItemsList({ items }) {
+const statuses = ['New', 'Read', 'Saved', 'Dismissed'];
+
+export function NewsItemsList({
+    items,
+    updatingItemId,
+    onUpdateStatus,
+}) {
     if (items.length === 0) {
         return (
             <div className="empty-state">
-                <h2>No imported news yet</h2>
+                <h2>No imported news found</h2>
                 <p>
-                    Go to News sources and use “Fetch now” to import the first RSS or
-                    Atom feed.
+                    Try changing the filters or import news from an active RSS or Atom
+                    source.
                 </p>
             </div>
         );
@@ -13,32 +19,114 @@ export function NewsItemsList({ items }) {
 
     return (
         <div className="news-items-list">
-            {items.map((item) => (
-                <article className="news-item-card" key={item.id}>
-                    <div className="news-item-meta">
-                        <span className="category-badge">{item.category}</span>
-                        <span>{item.sourceName}</span>
-                        <span>{formatDate(item.publishedAtUtc ?? item.retrievedAtUtc)}</span>
-                    </div>
+            {items.map((item) => {
+                const isUpdating = updatingItemId === item.id;
 
-                    <h2>{item.title}</h2>
+                return (
+                    <article className="news-item-card" key={item.id}>
+                        <div className="news-item-meta">
+                            <span className="category-badge">{item.category}</span>
+                            <StatusBadge status={item.status} />
+                            <span>{item.sourceName}</span>
+                            <span>
+                                {formatDate(item.publishedAtUtc ?? item.retrievedAtUtc)}
+                            </span>
+                        </div>
 
-                    {item.summary && <p>{stripHtml(item.summary)}</p>}
+                        <h2>{item.title}</h2>
 
-                    <div className="news-item-footer">
-                        {item.author && <span>By {item.author}</span>}
+                        {item.summary && (
+                            <p>{stripHtml(item.summary)}</p>
+                        )}
 
-                        <a
-                            href={item.originalUrl}
-                            target="_blank"
-                            rel="noreferrer"
-                        >
-                            Open original source →
-                        </a>
-                    </div>
-                </article>
-            ))}
+                        <div className="news-item-footer">
+                            <div className="news-item-author">
+                                {item.author && <span>By {item.author}</span>}
+                            </div>
+
+                            <a
+                                href={item.originalUrl}
+                                target="_blank"
+                                rel="noreferrer"
+                            >
+                                Open original source →
+                            </a>
+                        </div>
+
+                        <div className="news-item-actions">
+                            <button
+                                className="button button-secondary button-small"
+                                type="button"
+                                onClick={() => onUpdateStatus(item.id, 'Read')}
+                                disabled={isUpdating || item.status === 'Read'}
+                            >
+                                Mark as read
+                            </button>
+
+                            <button
+                                className="button button-secondary button-small"
+                                type="button"
+                                onClick={() => onUpdateStatus(item.id, 'Saved')}
+                                disabled={isUpdating || item.status === 'Saved'}
+                            >
+                                Save
+                            </button>
+
+                            <button
+                                className="button button-secondary button-small"
+                                type="button"
+                                onClick={() => onUpdateStatus(item.id, 'Dismissed')}
+                                disabled={isUpdating || item.status === 'Dismissed'}
+                            >
+                                Dismiss
+                            </button>
+
+                            <label className="status-select">
+                                <span>Change status</span>
+
+                                <select
+                                    value={item.status}
+                                    onChange={(event) =>
+                                        onUpdateStatus(item.id, event.target.value)
+                                    }
+                                    disabled={isUpdating}
+                                >
+                                    {statuses.map((status) => (
+                                        <option key={status} value={status}>
+                                            {status}
+                                        </option>
+                                    ))}
+                                </select>
+                            </label>
+
+                            {isUpdating && (
+                                <span className="updating-status">
+                                    Updating...
+                                </span>
+                            )}
+                        </div>
+                    </article>
+                );
+            })}
         </div>
+    );
+}
+
+function StatusBadge({ status }) {
+    const normalizedStatus =
+        typeof status === 'string'
+            ? status.toLowerCase()
+            : 'unknown';
+
+    const label =
+        typeof status === 'string'
+            ? status
+            : 'Unknown';
+
+    return (
+        <span className={`news-status-badge news-status-${normalizedStatus}`}>
+            {label}
+        </span>
     );
 }
 

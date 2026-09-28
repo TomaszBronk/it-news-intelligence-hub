@@ -1,42 +1,51 @@
-import { useEffect, useState } from 'react';
-import { getNewsItems } from '../api/newsItemsApi';
+import { useState } from 'react';
+import { NewsItemsFilters, createEmptyFilters } from '../components/NewsItemsFilters';
 import { NewsItemsList } from '../components/NewsItemsList';
+import { useNewsItems } from '../hooks/useNewsItems';
+import { useUpdateNewsItemStatus } from '../hooks/useUpdateNewsItemStatus';
+import { useNewsSources } from '../../news-sources/hooks/useNewsSources';
 
 export function NewsItemsPage() {
-    const [items, setItems] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [errorMessage, setErrorMessage] = useState(null);
+    const [filters, setFilters] = useState(createEmptyFilters());
 
-    useEffect(() => {
-        void loadItems();
-    }, []);
+    const {
+        data: items = [],
+        isPending: isItemsPending,
+        isFetching: isItemsFetching,
+        error: itemsError,
+        refetch: refetchItems,
+    } = useNewsItems(filters);
 
-    async function loadItems() {
-        setIsLoading(true);
-        setErrorMessage(null);
+    const {
+        data: sources = [],
+        isPending: isSourcesPending,
+    } = useNewsSources();
 
+    const updateStatusMutation = useUpdateNewsItemStatus();
+
+    async function handleUpdateStatus(id, status) {
         try {
-            const response = await getNewsItems();
-            setItems(response);
-        } catch (error) {
-            setErrorMessage(
-                error instanceof Error
-                    ? error.message
-                    : 'Unable to load news items.',
-            );
-        } finally {
-            setIsLoading(false);
+            await updateStatusMutation.mutateAsync({ id, status });
+        } catch {
+            // The error is rendered below from mutation state.
         }
     }
+
+    const errorMessage =
+        getErrorMessage(updateStatusMutation.error)
+        ?? getErrorMessage(itemsError);
+
+    const isFiltersLoading = isItemsFetching || isSourcesPending;
 
     return (
         <main className="page-shell">
             <section className="page-header">
                 <div>
                     <p className="eyebrow">IT News Intelligence Hub</p>
-                    <h1>Imported news</h1>
+                    <h1>News items</h1>
                     <p className="page-description">
-                        News collected from configured RSS and Atom sources. The list refreshes automatically every minute.
+                        Browse imported IT news, filter the list and manage saved items.
+                        The list refreshes automatically every minute.
                     </p>
                 </div>
 
@@ -44,30 +53,84 @@ export function NewsItemsPage() {
                     className="button button-secondary"
                     type="button"
                     onClick={() => {
-                        void loadItems();
+                        void refetchItems();
                     }}
-                    disabled={isLoading}
+                    disabled={isItemsFetching}
                 >
-                    {isLoading ? 'Loading...' : 'Refresh'}
+                    {isItemsFetching ? 'Refreshing...' : 'Refresh'}
                 </button>
             </section>
 
             {errorMessage && (
                 <section className="alert alert-error" role="alert">
                     <div>
-                        <strong>Unable to load news.</strong>
+                        <strong>Request failed.</strong>
                         <p>{errorMessage}</p>
                     </div>
                 </section>
             )}
 
             <section className="content-card">
-                {isLoading ? (
-                    <div className="loading-state">Loading imported news...</div>
+                <div className="section-heading">
+                    <div>
+                        <h2>Filters</h2>
+                        <p>Use filters to focus on the news that matters to you.</p>
+                    </div>
+                </div>
+
+                <NewsItemsFilters
+                    sources={sources}
+                    initialFilters={filters}
+                    onApply={(newFilters) => setFilters(newFilters)}
+                    onReset={(emptyFilters) => setFilters(emptyFilters)}
+                    isLoading={isFiltersLoading}
+                />
+            </section>
+
+            <section className="content-card">
+                <div className="section-heading">
+                    <div>
+                        <h2>Imported news</h2>
+                        <p>
+                            {items.length} {items.length === 1 ? 'item' : 'items'}
+                        </p>
+                    </div>
+
+                    <p className="refresh-status">
+                        {isItemsFetching
+                            ? 'Refreshing data...'
+                            : 'Auto-refresh: every 60 seconds'}
+                    </p>
+                </div>
+
+                {isItemsPending ? (
+                    <div className="loading-state">
+                        Loading imported news...
+                    </div>
                 ) : (
-                    <NewsItemsList items={items} />
+                    <NewsItemsList
+                        items={items}
+                        updatingItemId={
+                            updateStatusMutation.isPending
+                                ? updateStatusMutation.variables?.id
+                                : null
+                        }
+                        onUpdateStatus={handleUpdateStatus}
+                    />
                 )}
             </section>
         </main>
     );
+}
+
+function getErrorMessage(error) {
+    if (!error) {
+        return null;
+    }
+
+    if (error instanceof Error) {
+        return error.message;
+    }
+
+    return 'An unexpected error occurred while communicating with the API.';
 }

@@ -273,3 +273,99 @@ code {
     color: #667085;
     font-size: 0.8rem;
 }
+
+.news-filters {
+    display: grid;
+    gap: 20px;
+}
+
+.filters-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.filter-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.news-item-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    gap: 10px;
+    margin-top: 18px;
+    padding-top: 16px;
+    border-top: 1px solid #eaecf0;
+}
+
+.status-select {
+    display: grid;
+    min-width: 150px;
+    gap: 6px;
+    color: #475467;
+    font-size: 0.78rem;
+    font-weight: 600;
+}
+
+    .status-select select {
+        min-height: 34px;
+        padding: 6px 8px;
+    }
+
+.news-status-badge {
+    display: inline-flex;
+    border-radius: 999px;
+    padding: 4px 8px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.news-status-new {
+    color: #3538cd;
+    background: #eef4ff;
+}
+
+.news-status-read {
+    color: #475467;
+    background: #f2f4f7;
+}
+
+.news-status-saved {
+    color: #027a48;
+    background: #ecfdf3;
+}
+
+.news-status-dismissed {
+    color: #b42318;
+    background: #fef3f2;
+}
+
+.updating-status {
+    color: #667085;
+    font-size: 0.8rem;
+}
+
+@media (max-width: 900px) {
+    .filters-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 600px) {
+    .filters-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .filter-actions .button {
+        width: 100%;
+    }
+}
+
+.news-status-unknown {
+    color: #475467;
+    background: #f2f4f7;
+}

@@ -72,6 +72,11 @@ public class NewsHubDbContext(DbContextOptions<NewsHubDbContext> options)
             .HasMaxLength(50)
             .IsRequired();
 
+        newsItem.Property(item => item.Status)
+            .HasConversion<string>()
+            .HasMaxLength(20)
+            .IsRequired();
+
         newsItem.HasOne(item => item.Source)
             .WithMany(source => source.NewsItems)
             .HasForeignKey(item => item.SourceId)

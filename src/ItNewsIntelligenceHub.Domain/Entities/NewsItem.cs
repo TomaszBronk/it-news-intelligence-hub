@@ -1,29 +1,33 @@
-﻿namespace ItNewsIntelligenceHub.Domain.Entities;
+﻿using ItNewsIntelligenceHub.Domain.Enums;
 
-    public class NewsItem
-    {
-        public Guid Id { get; set; } = Guid.NewGuid();
+namespace ItNewsIntelligenceHub.Domain.Entities;
 
-        public Guid SourceId { get; set; }
+public class NewsItem
+{
+    public Guid Id { get; set; } = Guid.NewGuid();
 
-        public NewsSource Source { get; set; } = null!;
+    public Guid SourceId { get; set; }
 
-        public string ExternalId { get; set; } = string.Empty;
+    public NewsSource Source { get; set; } = null!;
 
-        public string Title { get; set; } = string.Empty;
+    public string ExternalId { get; set; } = string.Empty;
 
-        public string? Summary { get; set; }
+    public string Title { get; set; } = string.Empty;
 
-        public string OriginalUrl { get; set; } = string.Empty;
+    public string? Summary { get; set; }
 
-        public string? Author { get; set; }
+    public string OriginalUrl { get; set; } = string.Empty;
 
-        public DateTimeOffset? PublishedAtUtc { get; set; }
+    public string? Author { get; set; }
 
-        public DateTimeOffset RetrievedAtUtc { get; set; } = DateTimeOffset.UtcNow;
+    public DateTimeOffset? PublishedAtUtc { get; set; }
 
-        public string ContentHash { get; set; } = string.Empty;
+    public DateTimeOffset RetrievedAtUtc { get; set; } = DateTimeOffset.UtcNow;
 
-        public string Category { get; set; } = "Other";
-    }
+    public string ContentHash { get; set; } = string.Empty;
+
+    public string Category { get; set; } = "Other";
+
+    public NewsItemStatus Status { get; set; } = NewsItemStatus.New;
+}
 

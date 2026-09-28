@@ -1,4 +1,6 @@
-﻿namespace ItNewsIntelligenceHub.Server.Contracts.NewsItems
+﻿using ItNewsIntelligenceHub.Domain.Enums;
+
+namespace ItNewsIntelligenceHub.Server.Contracts.NewsItems
 {
     public record NewsItemResponse(
         Guid Id,
@@ -10,5 +12,6 @@
         string? Author,
         DateTimeOffset? PublishedAtUtc,
         DateTimeOffset RetrievedAtUtc,
-        string Category);
+        string Category,
+        NewsItemStatus Status);
 }

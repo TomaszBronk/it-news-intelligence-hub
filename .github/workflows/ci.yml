@@ -40,7 +40,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: src/ItNewsIntelligenceHub.Client
+        working-directory: src/itnewsintelligencehub.client
 
     steps:
       - name: Checkout repository

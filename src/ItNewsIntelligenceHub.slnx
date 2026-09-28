@@ -5,9 +5,6 @@
   </Folder>
   <Project Path="ItNewsIntelligenceHub.Application/ItNewsIntelligenceHub.Application.csproj" />
   <Project Path="ItNewsIntelligenceHub.Client/ItNewsIntelligenceHub.Client.esproj" />
-    <Build />
-    <Deploy />
-  </Project>
   <Project Path="ItNewsIntelligenceHub.Domain/ItNewsIntelligenceHub.Domain.csproj" />
   <Project Path="ItNewsIntelligenceHub.Infrastructure/ItNewsIntelligenceHub.Infrastructure.csproj" />
   <Project Path="ItNewsIntelligenceHub.Server/ItNewsIntelligenceHub.Server.csproj" />

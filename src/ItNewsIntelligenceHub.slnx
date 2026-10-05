@@ -4,7 +4,7 @@
     <Project Path="tests/ItNewsIntelligenceHub.Server.IntegrationTests/ItNewsIntelligenceHub.Server.IntegrationTests.csproj" Id="26077533-d898-4f33-aaf5-47cb5d860a88" />
   </Folder>
   <Project Path="ItNewsIntelligenceHub.Application/ItNewsIntelligenceHub.Application.csproj" />
-  <Project Path="ItNewsintelligenceHub.Client/ItNewsIntelligenceHub.Client.esproj">
+  <Project Path="ItNewsintelligenceHub.Client/itnewsintelligencehub.client.esproj">
     <Build />
     <Deploy />
   </Project>

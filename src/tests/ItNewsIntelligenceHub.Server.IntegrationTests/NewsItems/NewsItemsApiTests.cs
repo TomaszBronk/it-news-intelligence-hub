@@ -1,8 +1,9 @@
-﻿using System.Net;
-using System.Net.Http.Json;
-using ItNewsIntelligenceHub.Domain.Entities;
+﻿using ItNewsIntelligenceHub.Domain.Entities;
 using ItNewsIntelligenceHub.Domain.Enums;
+using ItNewsIntelligenceHub.Server.Contracts.NewsItems;
 using ItNewsIntelligenceHub.Server.IntegrationTests.Infrastructure;
+using System.Net;
+using System.Net.Http.Json;
 
 namespace ItNewsIntelligenceHub.Server.IntegrationTests.NewsItems;
 
@@ -103,8 +104,44 @@ public sealed class NewsItemsApiTests(
         };
     }
 
+    [Fact]
+    public async Task UpdateNote_WhenItemExists_ReturnsItemWithUpdatedNote()
+    {
+        // Arrange
+        var source = CreateSource();
+
+        var item = CreateNewsItem(
+            source,
+            title: "Azure AI Search updates",
+            status: NewsItemStatus.Saved);
+
+        await factory.SeedAsync(source, item);
+
+        var request = new UpdateNewsItemNoteRequest(
+            "Review Azure AI Search documentation before implementation.");
+
+        // Act
+        var response = await _client.PatchAsJsonAsync(
+            $"/api/news-items/{item.Id}/note",
+            request);
+
+        // Assert
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+        var updatedItem = await response.Content
+            .ReadFromJsonAsync<NewsItemResponse>();
+
+        Assert.NotNull(updatedItem);
+        Assert.Equal(
+            "Review Azure AI Search documentation before implementation.",
+            updatedItem.Note);
+    }
+
     private sealed record UpdateNewsItemStatusRequest(
         string Status);
+
+    private sealed record UpdateNewsItemNoteRequest(
+        string? Note);
 
     private sealed record NewsItemResponse(
         Guid Id,
@@ -117,5 +154,8 @@ public sealed class NewsItemsApiTests(
         DateTimeOffset? PublishedAtUtc,
         DateTimeOffset RetrievedAtUtc,
         string Category,
-        string Status);
+        string Status,
+        string Note);
+
+
 }

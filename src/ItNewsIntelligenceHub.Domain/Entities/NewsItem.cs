@@ -29,5 +29,6 @@ public class NewsItem
     public string Category { get; set; } = "Other";
 
     public NewsItemStatus Status { get; set; } = NewsItemStatus.New;
+    public string? Note { get; set; }
 }
 

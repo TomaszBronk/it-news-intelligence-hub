@@ -41,6 +41,7 @@ public class NewsHubDbContext(DbContextOptions<NewsHubDbContext> options)
         newsSource.Property(source => source.LastFetchError)
             .HasMaxLength(2000);
 
+
         var newsItem = modelBuilder.Entity<NewsItem>();
 
         newsItem.ToTable("NewsItems");
@@ -90,6 +91,9 @@ public class NewsHubDbContext(DbContextOptions<NewsHubDbContext> options)
             .IsUnique();
 
         newsItem.HasIndex(item => item.PublishedAtUtc);
+
+        newsItem.Property(item => item.Note)
+    .HasMaxLength(4000);
 
     }
 }

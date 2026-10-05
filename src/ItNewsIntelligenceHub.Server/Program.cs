@@ -1,4 +1,5 @@
 using ItNewsIntelligenceHub.Application;
+using ItNewsIntelligenceHub.Application.Common;
 using ItNewsIntelligenceHub.Infrastructure;
 using ItNewsIntelligenceHub.Server.BackgroundServices;
 using ItNewsIntelligenceHub.Server.Configuration;
@@ -41,6 +42,9 @@ builder.Services.AddHealthChecks();
 builder.Services.AddProblemDetails();
 
 builder.Services.AddExceptionHandler<ApiExceptionHandler>();
+
+builder.Services.Configure<AiOptions>(
+    builder.Configuration.GetSection(AiOptions.SectionName));
 
 
 var app = builder.Build();

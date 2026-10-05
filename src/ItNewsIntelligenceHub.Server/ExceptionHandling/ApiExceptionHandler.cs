@@ -87,6 +87,15 @@ public sealed class ApiExceptionHandler(
                 logLevel = LogLevel.Warning;
                 break;
 
+            case Exception apiEx:
+                problemDetails.Status = apiEx.GetHashCode() == 429
+                    ? StatusCodes.Status429TooManyRequests
+                    : StatusCodes.Status502BadGateway;
+                problemDetails.Title = "External OpenAI request failed";
+                problemDetails.Detail = apiEx.Message;
+                logLevel = LogLevel.Warning;
+                break;
+
             default:
                 problemDetails.Status = StatusCodes.Status500InternalServerError;
                 problemDetails.Title = "An unexpected error occurred";

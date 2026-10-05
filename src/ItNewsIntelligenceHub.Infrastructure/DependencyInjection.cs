@@ -1,9 +1,11 @@
 ﻿using ItNewsIntelligenceHub.Application.Abstractions.Feeds;
 using ItNewsIntelligenceHub.Application.Abstractions.Persistence;
+using ItNewsIntelligenceHub.Application.Abstractions.Summary;
 using ItNewsIntelligenceHub.Application.Abstractions.Time;
 using ItNewsIntelligenceHub.Infrastructure.Feeds;
 using ItNewsIntelligenceHub.Infrastructure.Persistence;
 using ItNewsIntelligenceHub.Infrastructure.Persistence.Repositories;
+using ItNewsIntelligenceHub.Infrastructure.Services;
 using ItNewsIntelligenceHub.Infrastructure.Time;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -38,6 +40,8 @@ public static class DependencyInjection
             client.DefaultRequestHeaders.UserAgent.ParseAdd(
                 "ITNewsIntelligenceHub/1.0 (+https://github.com/TomaszBronk/it-news-intelligence-hub)");
         });
+
+        services.AddScoped<ISummaryGenerator, OpenAiSummaryGenerator>();
 
         return services;
     }

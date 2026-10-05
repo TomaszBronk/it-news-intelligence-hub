@@ -31,6 +31,39 @@ export function AppLayout() {
                         >
                             News items
                         </NavLink>
+
+                        <NavLink
+                            className={({ isActive }) =>
+                                isActive
+                                    ? 'navigation-link navigation-link-active'
+                                    : 'navigation-link'
+                            }
+                            to="/briefing/saved"
+                        >
+                            Saved Briefings
+                        </NavLink>
+
+                        <NavLink
+                            className={({ isActive }) =>
+                                isActive
+                                    ? 'navigation-link navigation-link-active'
+                                    : 'navigation-link'
+                            }
+                            to="/briefing/daily"
+                        >
+                            Daily Briefing
+                        </NavLink>
+
+                        <NavLink
+                            className={({ isActive }) =>
+                                isActive
+                                    ? 'navigation-link navigation-link-active'
+                                    : 'navigation-link'
+                            }
+                            to="/briefing/weekly"
+                        >
+                            Weekly Briefing
+                        </NavLink>
                     </nav>
                 </div>
             </header>

@@ -1,7 +1,12 @@
 import { Navigate, createBrowserRouter } from 'react-router-dom';
 import { AppLayout } from '../shared/components/AppLayout';
+
 import { NewsItemsPage } from '../features/news-items/pages/NewsItemsPage';
 import { NewsSourcesPage } from '../features/news-sources/pages/NewsSourcesPage';
+
+import { SavedBriefingPage } from "../features/briefing/pages/SavedBriefingPage";
+import { DailyBriefingPage } from "../features/briefing/pages/DailyBriefingPage";
+import { WeeklyBriefingPage } from "../features/briefing/pages/WeeklyBriefingPage";
 
 export const router = createBrowserRouter([
     {
@@ -18,6 +23,18 @@ export const router = createBrowserRouter([
             {
                 path: '/news',
                 element: <NewsItemsPage />,
+            },
+            {
+                path: '/briefing/saved',
+                element: <SavedBriefingPage />,
+            },
+            {
+                path: '/briefing/daily',
+                element: <DailyBriefingPage />,
+            },
+            {
+                path: '/briefing/weekly',
+                element: <WeeklyBriefingPage />,
             },
         ],
     },

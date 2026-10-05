@@ -27,7 +27,7 @@ export function SavedBriefingPage() {
 
     return (
         <div className="space-y-4">
-            <h1 className="text-2xl font-bold">Zapisane newsy</h1>
+            <h1 className="text-2xl font-bold">Saved Briefings</h1>
             <NewsItemsList items={items} />
         </div>
     );

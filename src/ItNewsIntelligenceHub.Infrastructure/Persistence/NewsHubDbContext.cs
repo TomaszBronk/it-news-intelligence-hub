@@ -9,6 +9,7 @@ public class NewsHubDbContext(DbContextOptions<NewsHubDbContext> options)
 {
     public DbSet<NewsSource> NewsSources => Set<NewsSource>();
     public DbSet<NewsItem> NewsItems => Set<NewsItem>();
+    public DbSet<NewsSummary> NewsSummaries => Set<NewsSummary>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -94,6 +95,31 @@ public class NewsHubDbContext(DbContextOptions<NewsHubDbContext> options)
 
         newsItem.Property(item => item.Note)
     .HasMaxLength(4000);
+
+        var newsSummary = modelBuilder.Entity<NewsSummary>();
+
+        newsSummary.ToTable("NewsSummaries");
+
+        newsSummary.HasKey(s => s.Id);
+
+        newsSummary.Property(s => s.Id)
+            .IsRequired();
+
+        newsSummary.Property(s => s.NewsItemId)
+            .IsRequired();
+
+        newsSummary.HasIndex(s => s.NewsItemId);
+
+        newsSummary.Property(s => s.Content)
+            .IsRequired()
+            .HasMaxLength(4000);
+
+        newsSummary.Property(s => s.Model)
+            .IsRequired()
+            .HasMaxLength(100);
+
+        newsSummary.Property(s => s.CreatedAtUtc)
+            .IsRequired();
 
     }
 }

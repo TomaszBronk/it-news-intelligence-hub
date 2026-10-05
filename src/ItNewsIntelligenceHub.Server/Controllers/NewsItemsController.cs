@@ -82,7 +82,8 @@ public class NewsItemsController(NewsHubDbContext dbContext) : ControllerBase
                 item.PublishedAtUtc,
                 item.RetrievedAtUtc,
                 item.Category,
-                item.Status
+                item.Status,
+                item.Note
             ))
             .ToListAsync(cancellationToken);
 
@@ -123,6 +124,47 @@ public class NewsItemsController(NewsHubDbContext dbContext) : ControllerBase
             item.PublishedAtUtc,
             item.RetrievedAtUtc,
             item.Category,
-            item.Status));
+            item.Status,
+            item.Note));
+    }
+
+    [HttpPatch("{id:guid}/note")]
+    [ProducesResponseType(typeof(NewsItemResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<NewsItemResponse>> UpdateNote(
+    Guid id,
+    UpdateNewsItemNoteRequest request,
+    CancellationToken cancellationToken)
+    {
+        var item = await dbContext.NewsItems
+            .Include(newsItem => newsItem.Source)
+            .SingleOrDefaultAsync(
+                newsItem => newsItem.Id == id,
+                cancellationToken);
+
+        if (item is null)
+        {
+            return NotFound();
+        }
+
+        item.Note = string.IsNullOrWhiteSpace(request.Note)
+            ? null
+            : request.Note.Trim();
+
+        await dbContext.SaveChangesAsync(cancellationToken);
+
+        return Ok(new NewsItemResponse(
+            item.Id,
+            item.SourceId,
+            item.Source.Name,
+            item.Title,
+            item.Summary,
+            item.OriginalUrl,
+            item.Author,
+            item.PublishedAtUtc,
+            item.RetrievedAtUtc,
+            item.Category,
+            item.Status,
+            item.Note));
     }
 }

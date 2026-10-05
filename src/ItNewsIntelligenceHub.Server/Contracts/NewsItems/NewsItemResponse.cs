@@ -13,5 +13,6 @@ namespace ItNewsIntelligenceHub.Server.Contracts.NewsItems
         DateTimeOffset? PublishedAtUtc,
         DateTimeOffset RetrievedAtUtc,
         string Category,
-        NewsItemStatus Status);
+        NewsItemStatus Status,
+         string? Note);
 }

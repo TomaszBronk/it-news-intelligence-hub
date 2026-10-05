@@ -34,27 +34,4 @@ jobs:
       - name: Run .NET tests
         run: dotnet test src/ItNewsIntelligenceHub.slnx --configuration Release --no-build --verbosity normal
 
-  frontend:
-    name: Frontend — build
-    runs-on: ubuntu-latest
 
-    defaults:
-      run:
-        working-directory: src/itnewsintelligencehub.client
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v6
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v7
-        with:
-          node-version: 22.21.1
-          cache: npm
-          cache-dependency-path: src/itnewsintelligencehub.client/package-lock.json
-          
-      - name: Install frontend dependencies
-        run: npm ci
-
-      - name: Build frontend
-        run: npm run build

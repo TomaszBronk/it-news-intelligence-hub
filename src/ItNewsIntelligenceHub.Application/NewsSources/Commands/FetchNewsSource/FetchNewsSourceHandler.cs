@@ -1,10 +1,10 @@
-﻿using System.Security.Cryptography;
-using System.Text;
-using ItNewsIntelligenceHub.Application.Abstractions.Feeds;
+﻿using ItNewsIntelligenceHub.Application.Abstractions.Feeds;
 using ItNewsIntelligenceHub.Application.Abstractions.Persistence;
 using ItNewsIntelligenceHub.Application.Abstractions.Time;
-using ItNewsIntelligenceHub.Domain.Entities;
 using ItNewsIntelligenceHub.Application.Common.Exceptions;
+using ItNewsIntelligenceHub.Domain.Entities;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace ItNewsIntelligenceHub.Application.NewsSources.Commands.FetchNewsSource;
 
@@ -89,7 +89,7 @@ public sealed class FetchNewsSourceHandler(
         if (itemsToAdd.Count > 0)
         {
             await newsItemRepository.AddRangeAsync(itemsToAdd, cancellationToken);
-        }    
+        }
 
 
         source.LastFetchedAtUtc = clock.UtcNow;

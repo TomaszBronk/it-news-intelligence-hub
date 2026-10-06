@@ -1,10 +1,10 @@
-﻿using System.ClientModel;
-using ItNewsIntelligenceHub.Application.Abstractions;
+﻿using ItNewsIntelligenceHub.Application.Abstractions;
 using ItNewsIntelligenceHub.Application.Common;
 using ItNewsIntelligenceHub.Domain.Entities;
 using Microsoft.Extensions.Options;
 using OpenAI;
 using OpenAI.Chat;
+using System.ClientModel;
 
 namespace ItNewsIntelligenceHub.Infrastructure.Services;
 

@@ -1,10 +1,10 @@
 ﻿using ItNewsIntelligenceHub.Application.Abstractions.Feeds;
 using ItNewsIntelligenceHub.Application.Abstractions.Persistence;
 using ItNewsIntelligenceHub.Application.Abstractions.Time;
+using ItNewsIntelligenceHub.Application.Common.Exceptions;
 using ItNewsIntelligenceHub.Application.NewsSources.Commands.FetchNewsSource;
 using ItNewsIntelligenceHub.Domain.Entities;
 using NSubstitute;
-using ItNewsIntelligenceHub.Application.Common.Exceptions;
 
 namespace ItNewsIntelligenceHub.Application.Tests.NewsSources.Commands.FetchNewsSource;
 

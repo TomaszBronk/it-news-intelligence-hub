@@ -1,8 +1,8 @@
-﻿using System.ServiceModel.Syndication;
-using System.Xml;
-using ItNewsIntelligenceHub.Application.Abstractions.Feeds;
+﻿using ItNewsIntelligenceHub.Application.Abstractions.Feeds;
 using ItNewsIntelligenceHub.Application.NewsSources.Commands.FetchNewsSource;
 using Microsoft.Extensions.Logging;
+using System.ServiceModel.Syndication;
+using System.Xml;
 
 namespace ItNewsIntelligenceHub.Infrastructure.Feeds;
 

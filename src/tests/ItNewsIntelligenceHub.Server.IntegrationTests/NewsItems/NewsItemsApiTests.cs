@@ -1,6 +1,5 @@
 ﻿using ItNewsIntelligenceHub.Domain.Entities;
 using ItNewsIntelligenceHub.Domain.Enums;
-using ItNewsIntelligenceHub.Server.Contracts.NewsItems;
 using ItNewsIntelligenceHub.Server.IntegrationTests.Infrastructure;
 using System.Net;
 using System.Net.Http.Json;

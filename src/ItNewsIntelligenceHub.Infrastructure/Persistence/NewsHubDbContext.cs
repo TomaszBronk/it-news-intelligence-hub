@@ -1,6 +1,5 @@
 ﻿using ItNewsIntelligenceHub.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ItNewsIntelligenceHub.Infrastructure.Persistence;
 

@@ -1,8 +1,7 @@
-﻿using System.Net;
-using System.Xml;
-using ItNewsIntelligenceHub.Application.Common.Exceptions;
+﻿using ItNewsIntelligenceHub.Application.Common.Exceptions;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using System.Xml;
 
 namespace ItNewsIntelligenceHub.Server.ExceptionHandling;
 

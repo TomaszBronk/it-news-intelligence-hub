@@ -1,6 +1,4 @@
-﻿using ItNewsIntelligenceHub.Application.Abstractions;
-using ItNewsIntelligenceHub.Application.Abstractions.Summary;
-using ItNewsIntelligenceHub.Domain.Entities;
+﻿using ItNewsIntelligenceHub.Application.Abstractions.Summary;
 using ItNewsIntelligenceHub.Infrastructure.Persistence;
 using ItNewsIntelligenceHub.Server.Contracts.NewsItems;
 using Microsoft.AspNetCore.Mvc;

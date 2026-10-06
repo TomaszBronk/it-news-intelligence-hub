@@ -11,7 +11,6 @@ using ItNewsIntelligenceHub.Infrastructure.Time;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Http;
 
 namespace ItNewsIntelligenceHub.Infrastructure;
 

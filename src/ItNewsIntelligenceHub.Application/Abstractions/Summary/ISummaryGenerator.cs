@@ -1,7 +1,4 @@
 ﻿using ItNewsIntelligenceHub.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ItNewsIntelligenceHub.Application.Abstractions.Summary
 {

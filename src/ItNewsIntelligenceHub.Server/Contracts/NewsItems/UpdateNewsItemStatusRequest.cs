@@ -1,5 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
-using ItNewsIntelligenceHub.Domain.Enums;
+﻿using ItNewsIntelligenceHub.Domain.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace ItNewsIntelligenceHub.Server.Contracts.NewsItems;
 

@@ -1,6 +1,6 @@
-﻿using System.Net;
+﻿using ItNewsIntelligenceHub.Server.IntegrationTests.Infrastructure;
+using System.Net;
 using System.Net.Http.Json;
-using ItNewsIntelligenceHub.Server.IntegrationTests.Infrastructure;
 
 namespace ItNewsIntelligenceHub.Server.IntegrationTests.NewsSources;
 

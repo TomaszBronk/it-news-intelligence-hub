@@ -56,9 +56,9 @@ export async function getLatestDraft(newsItemId) {
     return response.data;
 }
 
-export async function updateDraft(draftId, updates) {
+export async function updateDraft(newsItemId,draftId, updates) {
     const response = await apiClient.patch(
-        `/news-items/draft/${draftId}`,
+        `/news-items/${newsItemId}/draft/${draftId}`,
         updates
     );
     return response.data;

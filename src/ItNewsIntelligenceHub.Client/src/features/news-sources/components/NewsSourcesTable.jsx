@@ -5,18 +5,24 @@ export function NewsSourcesTable({
 }) {
     if (sources.length === 0) {
         return (
-            <div className="empty-state">
+            <div className="empty-state sources-empty-state">
+                <div className="sources-empty-icon" aria-hidden="true">
+                    RSS
+                </div>
+
                 <h2>No news sources yet</h2>
+
                 <p>
-                    Add an RSS or Atom source to start building your IT news briefing.
+                    Add an RSS or Atom source to start building your IT news
+                    briefing.
                 </p>
             </div>
         );
     }
 
     return (
-        <div className="table-wrapper">
-            <table>
+        <div className="table-wrapper sources-table-wrapper">
+            <table className="sources-table">
                 <thead>
                     <tr>
                         <th>Source</th>
@@ -24,7 +30,7 @@ export function NewsSourcesTable({
                         <th>Status</th>
                         <th>Last attempt</th>
                         <th>Last successful import</th>
-                        <th>Actions</th>
+                        <th >Actions</th>
                     </tr>
                 </thead>
 
@@ -35,33 +41,67 @@ export function NewsSourcesTable({
 
                         return (
                             <tr key={source.id}>
-                                <td>
+                                <td className="source-main-cell">
                                     <div className="source-name">
-                                        <strong>{source.name}</strong>
+                                        <div className="source-name-row">
+                                            <strong>{source.name}</strong>
 
-                                        <a
-                                            href={source.feedUrl}
-                                            target="_blank"
-                                            rel="noreferrer"
-                                            title={source.feedUrl}
-                                        >
-                                            RSS / Atom feed
-                                        </a>
+                                            <span
+                                                className={
+                                                    source.isActive
+                                                        ? 'source-active-badge'
+                                                        : 'source-inactive-badge'
+                                                }
+                                            >
+                                                {source.isActive
+                                                    ? 'Active'
+                                                    : 'Inactive'}
+                                            </span>
+                                        </div>
 
-                                        {source.websiteUrl && (
+                                        <div className="source-links">
                                             <a
-                                                href={source.websiteUrl}
+                                                className="source-link"
+                                                href={source.feedUrl}
                                                 target="_blank"
                                                 rel="noreferrer"
+                                                title={source.feedUrl}
                                             >
-                                                Website
+                                                RSS / Atom feed
                                             </a>
-                                        )}
+
+                                            {source.websiteUrl && (
+                                                <>
+                                                    <span
+                                                        className="source-link-separator"
+                                                        aria-hidden="true"
+                                                    >
+                                                        ·
+                                                    </span>
+
+                                                    <a
+                                                        className="source-link"
+                                                        href={source.websiteUrl}
+                                                        target="_blank"
+                                                        rel="noreferrer"
+                                                    >
+                                                        Website
+                                                    </a>
+                                                </>
+                                            )}
+                                        </div>
+
+                                        <span
+                                            className="source-feed-url"
+                                            title={source.feedUrl}
+                                        >
+                                            {source.feedUrl}
+                                        </span>
                                     </div>
                                 </td>
 
                                 <td>
-                                    <span className="category-badge">
+                                    <span className="category-badge source-category-badge">
                                         {source.category}
                                     </span>
                                 </td>
@@ -70,14 +110,18 @@ export function NewsSourcesTable({
                                     <ImportStatusBadge status={status} />
                                 </td>
 
-                                <td>{formatDate(source.lastFetchAttemptAtUtc)}</td>
+                                <td className="source-date-cell">
+                                    {formatDate(source.lastFetchAttemptAtUtc)}
+                                </td>
 
-                                <td>{formatDate(source.lastSuccessfulFetchAtUtc)}</td>
+                                <td className="source-date-cell">
+                                    {formatDate(source.lastSuccessfulFetchAtUtc)}
+                                </td>
 
-                                <td>
+                                <td className="sources-actions-cell">
                                     <div className="source-actions">
                                         <button
-                                            className="button button-secondary button-small"
+                                            className="button button-secondary button-small source-fetch-button"
                                             type="button"
                                             onClick={() => onFetch(source.id)}
                                             disabled={!source.isActive || isFetching}
@@ -91,16 +135,18 @@ export function NewsSourcesTable({
                                         </button>
 
                                         {!source.isActive && (
-                                            <span className="inactive-note">Inactive</span>
+                                            <span className="inactive-note">
+                                                Inactive source
+                                            </span>
                                         )}
+                   
                                     </div>
-
-                                    {source.lastFetchError && (
-                                        <p className="import-error-message" role="alert">
-                                            {source.lastFetchError}
-                                        </p>
-                                    )}
+                      
+                      
                                 </td>
+                            
+                     
+                                 
                             </tr>
                         );
                     })}

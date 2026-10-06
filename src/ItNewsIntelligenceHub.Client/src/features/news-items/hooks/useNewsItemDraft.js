@@ -50,7 +50,7 @@ export function useUpdateDraft(draftId, newsItemId) {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: (updates) => updateDraft(draftId, updates),
+        mutationFn: (updates) => updateDraft(newsItemId, draftId, updates),
         onSuccess: (data) => {
             queryClient.setQueryData(
                 ["news-draft", newsItemId],

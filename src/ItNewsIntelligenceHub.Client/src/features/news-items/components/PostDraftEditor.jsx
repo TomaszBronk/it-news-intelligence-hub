@@ -92,65 +92,66 @@ export function PostDraftEditor({ newsItemId }) {
     }
 
     return (
-        <div className="border rounded p-4 bg-white">
-            <h3 className="font-semibold mb-3">Szkic posta / dyskusji</h3>
+        <div className="draft-editor">
+        
 
             {error && (
-                <div className="text-sm text-gray-600 mb-3">
-                    Brak zapisanego szkicu. Wygeneruj post lub dyskusję.
+                <div className="draft-status-message">
+                    No saved draft yet. Generate a post or discussion prompt
                 </div>
             )}
 
             {isLoading && (
-                <div className="text-sm text-gray-600 mb-3">
-                    Ładowanie szkicu...
+                <div className="draft-status-message">
+                    Loading draft...
                 </div>
             )}
 
-            {!isLoading && (
-                <div className="space-y-3">
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Tytuł (post)
+            {!isLoading  && (
+                <div className="draft-form">
+                    <div className="draft-field">
+                        <label htmlFor={`draft-title-${newsItemId}`}>
+                            Title
                         </label>
                         <input
+                            id={`draft-title-${newsItemId}`}
                             type="text"
-                            className="w-full border rounded px-3 py-2 text-sm"
                             value={title}
-                            onChange={(e) => setTitle(e.target.value)}
+                            onChange={(event) =>
+                                setTitle(event.target.value)
+                            }
                         />
                     </div>
 
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Treść posta
+                    <div className="draft-field">
+                        <label htmlFor={`draft-content-${newsItemId}`}>
+                            Content
                         </label>
 
                         {postContent.trim() !== "" && (
                             <textarea
-                                className="w-3/4 border rounded px-3 py-2 text-sm"
-                                rows={10}
-                                cols={100}
+                                id={`draft-content-${newsItemId}`}
                                 value={postContent}
                                 onChange={(e) => setPostContent(e.target.value)}
                             />
                         )}
                         <div className="flex gap-2 mt-2">
                             <button
-                                className="px-3 py-1.5 bg-green-600 text-white rounded text-sm hover:bg-green-700 disabled:opacity-50"
+                                className="news-action-button button-secondary"
                                 onClick={handleGeneratePost}
                                 disabled={generatingPost}
                             >
-                                {generatingPost ? "Generowanie..." : "Generuj post"}
+                                {generatingPost ? "Generating..." : "Generate post"}
                             </button>
                         </div>
                     </div>
 
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Treść dyskusji
-                        </label>
+                  
 
+                    <div className="draft-field">
+                            <label htmlFor={`draft-content-${newsItemId}`}>
+                                Discussion
+                            </label>
                         {discussionContent.trim() !== "" && (
                             <textarea
                                 className="w-3/4 border rounded px-3 py-2 text-sm"
@@ -162,16 +163,16 @@ export function PostDraftEditor({ newsItemId }) {
                         )}
                         <div className="flex gap-2 mt-2">
                             <button
-                                className="px-3 py-1.5 bg-purple-600 text-white rounded text-sm hover:bg-purple-700 disabled:opacity-50"
+                                className="news-action-button button-secondary"
                                 onClick={handleGenerateDiscussion}
                                 disabled={generatingDiscussion}
                             >
-                                {generatingDiscussion ? "Generowanie..." : "Generuj dyskusję"}
+                                {generatingDiscussion ? "Generating..." : "Generate discussion"}
                             </button>
                         </div>
                     </div>
 
-                    <div className="flex items-center gap-2">
+                    <div className="draft-published-checkbox">
                         <input
                             id="isPublished"
                             type="checkbox"
@@ -180,22 +181,22 @@ export function PostDraftEditor({ newsItemId }) {
                             className="h-4 w-4"
                         />
                         <label htmlFor="isPublished" className="text-sm text-gray-700">
-                            Opublikowany
+                            Publish
                         </label>
                     </div>
 
-                    <div className="flex flex-wrap gap-2">
+                    <div className="draft-actions">
                         <button
-                            className="px-3 py-1.5 bg-blue-600 text-white rounded text-sm hover:bg-blue-700 disabled:opacity-50"
+                            className="news-action-button button-primary"
                             onClick={handleSave}
                             disabled={saving}
                         >
-                            {saving ? "Zapisywanie..." : "Zapisz"}
+                            {saving ? "Saving..." : "Save"}
                         </button>
                     </div>
 
                     {draft?.sourceUrl && (
-                        <div className="text-xs text-gray-500">
+                        <div className="draft-source">
                             Źródło:{" "}
                             <a
                                 href={draft.sourceUrl}

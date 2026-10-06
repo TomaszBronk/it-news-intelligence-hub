@@ -9,9 +9,9 @@ export function NewsItemsList({
     updatingItemId,
     onUpdateStatus,
 }) {
-    const [summaries, setSummaries] = useState({}); // map newsItemId -> summaryText ("" means none)
-    const [loadingSummary, setLoadingSummary] = useState({}); // map newsItemId -> boolean
-    const [loadingGenerate, setLoadingGenerate] = useState({}); // kept for generate action UI
+    const [summaries, setSummaries] = useState({}); // newsItemId -> summaryText ("" means none)
+    const [loadingSummary, setLoadingSummary] = useState({}); // newsItemId -> boolean
+    const [loadingGenerate, setLoadingGenerate] = useState({}); // newsItemId -> boolean
 
     useEffect(() => {
         let cancelled = false;
@@ -20,7 +20,6 @@ export function NewsItemsList({
             if (!items || items.length === 0) return;
 
             for (const item of items) {
-                // skip if we already loaded this item's summary
                 if (Object.prototype.hasOwnProperty.call(summaries, item.id)) {
                     continue;
                 }
@@ -31,7 +30,6 @@ export function NewsItemsList({
                     if (cancelled) return;
                     setSummaries(prev => ({ ...prev, [item.id]: resp.content ?? "" }));
                 } catch (e) {
-                    // If not found or error, treat as no summary yet.
                     if (cancelled) return;
                     setSummaries(prev => ({ ...prev, [item.id]: "" }));
                 } finally {
@@ -46,18 +44,15 @@ export function NewsItemsList({
         return () => {
             cancelled = true;
         };
-        // Intentionally not adding `summaries` to deps to avoid refetch loops.
-        // We only want to probe for existing summaries when `items` changes.
     }, [items]);
 
     async function handleGenerateSummary(id) {
         try {
             setLoadingGenerate(prev => ({ ...prev, [id]: true }));
             const response = await generateSummary(id);
-            // response expected shape: NewsSummaryResponse { content }
             setSummaries(prev => ({ ...prev, [id]: response.content ?? "" }));
         } catch (e) {
-            setSummaries(prev => ({ ...prev, [id]: "Błąd podczas generowania podsumowania." }));
+            setSummaries(prev => ({ ...prev, [id]: "Error generating summary." }));
         } finally {
             setLoadingGenerate(prev => ({ ...prev, [id]: false }));
         }
@@ -85,44 +80,81 @@ export function NewsItemsList({
 
                 return (
                     <article className="news-item-card" key={item.id}>
-                        <div className="news-item-meta">
-                            <span className="category-badge">{item.category}</span>
-                            <StatusBadge status={item.status} />
-                            <span>{item.sourceName}</span>
-                            <span>
-                                {formatDate(item.publishedAtUtc ?? item.retrievedAtUtc)}
-                            </span>
+                        <div className="news-item-header">
+                            <div className="news-item-meta">
+                                <span className="category-badge">{item.category}</span>
+                                <StatusBadge status={item.status} />
+                                <span className="news-source-name">{item.sourceName}</span>
+                                <span className="news-published-date">
+                                    {formatDate(item.publishedAtUtc ?? item.retrievedAtUtc)}
+                                </span>
+                            </div>
                         </div>
 
-                        <h2>{item.title}</h2>
+                        <div className="news-item-content">
+                            <h2 className="news-item-title">{item.title}</h2>
 
-                        {item.summary && (
-                            <p>{stripHtml(item.summary)}</p>
-                        )}
-
-                        <div className="mb-2">
-                            {isLoadingExisting ? (
-                                <span className="text-sm text-gray-600">Sprawdzanie podsumowania...</span>
-                            ) : summaryText && summaryText !== "" ? (
-                                <div className="generated-summary border rounded p-3 mb-3 bg-gray-50">
-                                    <strong>Istniejące podsumowanie:</strong>
-                                    <div className="mt-2 whitespace-pre-wrap">
-                                        {summaryText}
-                                    </div>
-                                </div>
-                            ) : (
-                                <button
-                                    className="button button-primary button-small mr-2"
-                                    type="button"
-                                    onClick={() => handleGenerateSummary(item.id)}
-                                    disabled={isGenerating}
-                                >
-                                    {isGenerating ? "Generowanie..." : "Wygeneruj podsumowanie"}
-                                </button>
+                            {item.summary && (
+                                <p className="news-original-summary">
+                                    {stripHtml(item.summary)}
+                                </p>
                             )}
                         </div>
 
-                        <PostDraftEditor newsItemId={item.id} generated={summaryText ?? ""} />
+                        <section className="ai-generated-section">
+                            <div className="ai-section-header">
+                                <div>
+                                    <span className="ai-section-label">AI-generated content</span>
+                                    <p className="ai-section-description">
+                                        Review and edit before sharing.
+                                    </p>
+                                </div>
+
+                                <span className="ai-section-badge">AI</span>
+                            </div>
+
+                            <div className="ai-section-content">
+                                <div className="ai-content-block">
+                                    <div className="ai-content-heading">
+                                        <h3>Summary</h3>
+                                        <span>Polish summary</span>
+                                    </div>
+
+                                    {isLoadingExisting ? (
+                                        <p className="ai-loading-text">
+                                            Checking for existing summary...
+                                        </p>
+                                    ) : summaryText && summaryText !== "" ? (
+                                        <div className="ai-text-box">
+                                            {summaryText}
+                                        </div>
+                                    ) : (
+                                        <button
+                                            className="news-action-button button-primary"
+                                            type="button"
+                                            onClick={() => handleGenerateSummary(item.id)}
+                                            disabled={isGenerating}
+                                        >
+                                            {isGenerating
+                                                ? "Generating..."
+                                                : "Generate summary"}
+                                        </button>
+                                    )}
+                                </div>
+
+                                <div className="ai-content-block">
+                                    <div className="ai-content-heading">
+                                        <h3>Post & discussion</h3>
+                                        <span>Editable draft</span>
+                                    </div>
+
+                                    <PostDraftEditor
+                                        newsItemId={item.id}
+                                        generated={summaryText ?? ""}
+                                    />
+                                </div>
+                            </div>
+                        </section>
 
                         <div className="news-item-footer">
                             <div className="news-item-author">
@@ -133,35 +165,37 @@ export function NewsItemsList({
                                 href={item.originalUrl}
                                 target="_blank"
                                 rel="noreferrer"
+                                className="original-source-link"
                             >
-                                Open original source →
+                                Open original source
+                                <span aria-hidden="true"> →</span>
                             </a>
                         </div>
 
                         <div className="news-item-actions">
                             <button
-                                className="button button-secondary button-small"
+                                className="news-action-button button-secondary"
                                 type="button"
-                                onClick={() => onUpdateStatus(item.id, 'Read')}
-                                disabled={isUpdating || item.status === 'Read'}
+                                onClick={() => onUpdateStatus(item.id, "Read")}
+                                disabled={isUpdating || item.status === "Read"}
                             >
                                 Mark as read
                             </button>
 
                             <button
-                                className="button button-secondary button-small"
+                                className="news-action-button button-secondary"
                                 type="button"
-                                onClick={() => onUpdateStatus(item.id, 'Saved')}
-                                disabled={isUpdating || item.status === 'Saved'}
+                                onClick={() => onUpdateStatus(item.id, "Saved")}
+                                disabled={isUpdating || item.status === "Saved"}
                             >
                                 Save
                             </button>
 
                             <button
-                                className="button button-secondary button-small"
+                                className="news-action-button button-secondary"
                                 type="button"
-                                onClick={() => onUpdateStatus(item.id, 'Dismissed')}
-                                disabled={isUpdating || item.status === 'Dismissed'}
+                                onClick={() => onUpdateStatus(item.id, "Dismissed")}
+                                disabled={isUpdating || item.status === "Dismissed"}
                             >
                                 Dismiss
                             </button>

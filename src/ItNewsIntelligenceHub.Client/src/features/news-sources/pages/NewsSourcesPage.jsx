@@ -74,7 +74,7 @@ export function NewsSourcesPage() {
                             setSuccessMessage(null);
                         }}
                     >
-                        Add source
+                        Add RSS / Atom source
                     </button>
                 )}
             </section>

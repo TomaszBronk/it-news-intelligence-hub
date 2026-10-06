@@ -11,6 +11,8 @@ public class NewsHubDbContext(DbContextOptions<NewsHubDbContext> options)
     public DbSet<NewsItem> NewsItems => Set<NewsItem>();
     public DbSet<NewsSummary> NewsSummaries => Set<NewsSummary>();
 
+    public DbSet<PostDraft> PostDrafts => Set<PostDraft>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -121,5 +123,44 @@ public class NewsHubDbContext(DbContextOptions<NewsHubDbContext> options)
         newsSummary.Property(s => s.CreatedAtUtc)
             .IsRequired();
 
+
+        var postDraft = modelBuilder.Entity<PostDraft>();
+
+        postDraft.ToTable("PostDrafts");
+
+        postDraft.HasKey(d => d.Id);
+
+        postDraft.Property(d => d.Id)
+            .IsRequired();
+
+        postDraft.Property(d => d.NewsItemId)
+            .IsRequired();
+
+        postDraft.HasIndex(d => d.NewsItemId);
+
+        postDraft.Property(d => d.Title)
+            .IsRequired()
+            .HasMaxLength(500);
+
+        postDraft.Property(d => d.Content)
+            .IsRequired()
+            .HasMaxLength(4000);
+
+        postDraft.Property(d => d.Type)
+            .IsRequired()
+            .HasMaxLength(50);
+
+        postDraft.Property(d => d.SourceUrl)
+            .IsRequired()
+            .HasMaxLength(2000);
+
+        postDraft.Property(d => d.IsPublished)
+            .IsRequired();
+
+        postDraft.Property(d => d.CreatedAtUtc)
+            .IsRequired();
+
+        postDraft.Property(d => d.UpdatedAtUtc)
+            .IsRequired(false);
     }
 }

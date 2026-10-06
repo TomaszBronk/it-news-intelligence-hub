@@ -1,4 +1,5 @@
-﻿using ItNewsIntelligenceHub.Application.Abstractions.Feeds;
+﻿using ItNewsIntelligenceHub.Application.Abstractions;
+using ItNewsIntelligenceHub.Application.Abstractions.Feeds;
 using ItNewsIntelligenceHub.Application.Abstractions.Persistence;
 using ItNewsIntelligenceHub.Application.Abstractions.Summary;
 using ItNewsIntelligenceHub.Application.Abstractions.Time;
@@ -42,6 +43,7 @@ public static class DependencyInjection
         });
 
         services.AddScoped<ISummaryGenerator, OpenAiSummaryGenerator>();
+        services.AddScoped<IPostDraftGenerator, PostDraftGenerator>();
 
         return services;
     }

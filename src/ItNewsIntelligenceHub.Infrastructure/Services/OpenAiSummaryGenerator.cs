@@ -36,7 +36,7 @@ public sealed class OpenAiSummaryGenerator : ISummaryGenerator
     {
         var prompt = $"""
             You are a helpful assistant that summarizes IT news in Polish.
-            Create a short, factual summary in Polish (3–6 sentences).
+            Create a short, factual summary in Polish (6–10 sentences).
             Do not add opinions or speculation.
             Use clear, professional language suitable for developers.
 

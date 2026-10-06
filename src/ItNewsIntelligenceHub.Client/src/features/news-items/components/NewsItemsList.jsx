@@ -29,11 +29,10 @@ export function NewsItemsList({
                     const resp = await getLatestSummary(item.id);
                     if (cancelled) return;
                     setSummaries(prev => ({ ...prev, [item.id]: resp.content ?? "" }));
-                } catch (e) {
+                } catch {
                     if (cancelled) return;
                     setSummaries(prev => ({ ...prev, [item.id]: "" }));
                 } finally {
-                    if (cancelled) return;
                     setLoadingSummary(prev => ({ ...prev, [item.id]: false }));
                 }
             }
@@ -51,7 +50,7 @@ export function NewsItemsList({
             setLoadingGenerate(prev => ({ ...prev, [id]: true }));
             const response = await generateSummary(id);
             setSummaries(prev => ({ ...prev, [id]: response.content ?? "" }));
-        } catch (e) {
+        } catch  {
             setSummaries(prev => ({ ...prev, [id]: "Error generating summary." }));
         } finally {
             setLoadingGenerate(prev => ({ ...prev, [id]: false }));

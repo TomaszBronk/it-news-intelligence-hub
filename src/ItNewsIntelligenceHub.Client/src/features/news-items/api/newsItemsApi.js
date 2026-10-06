@@ -34,3 +34,45 @@ export async function updateNewsItemStatus({ id, status }) {
     return response.data;
 
 }
+
+export async function generatePostDraft(newsItemId) {
+    const response = await apiClient.post(
+        `/news-items/${newsItemId}/draft/generate-post`
+    );
+    return response.data;
+}
+
+export async function generateDiscussionPrompt(newsItemId) {
+    const response = await apiClient.post(
+        `/news-items/${newsItemId}/draft/generate-discussion`
+    );
+    return response.data;
+}
+
+export async function getLatestDraft(newsItemId) {
+    const response = await apiClient.get(
+        `/news-items/${newsItemId}/draft`
+    );
+    return response.data;
+}
+
+export async function updateDraft(draftId, updates) {
+    const response = await apiClient.patch(
+        `/news-items/draft/${draftId}`,
+        updates
+    );
+    return response.data;
+}
+export async function generateSummary(newsItemId) {
+    const response = await apiClient.post(
+        `/news-items/${newsItemId}/summary`,
+    );
+    return response.data;
+}
+
+export async function getLatestSummary(newsItemId) {
+    const response = await apiClient.get(
+        `/news-items/${newsItemId}/summary`,
+    );
+    return response.data;
+}

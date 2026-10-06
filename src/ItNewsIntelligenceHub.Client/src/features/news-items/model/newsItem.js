@@ -14,4 +14,17 @@
  * @property {string | null} note
  */
 
+/**
+ * @typedef {Object} PostDraft
+ * @property {string} id
+ * @property {string} newsItemId
+ * @property {string} title
+ * @property {string} content
+ * @property {"Post" | "DiscussionPrompt"} type
+ * @property {string} sourceUrl
+ * @property {boolean} isPublished
+ * @property {string} createdAtUtc
+ * @property {string | null} updatedAtUtc
+ */
+
 export { };

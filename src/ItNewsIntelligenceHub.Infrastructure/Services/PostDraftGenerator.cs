@@ -46,6 +46,7 @@ public sealed class PostDraftGenerator : IPostDraftGenerator
               - clear opening sentence about what changed,
               - 2–4 key points or implications for developers,
               - one sentence with a practical takeaway or recommendation,
+              - Add topical hashtags before the URL,
               - the original source URL at the end.
             - Do not invent facts. Use only the provided information.
 

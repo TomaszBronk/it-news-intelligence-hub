@@ -2,7 +2,7 @@
 
 [![Continuous Integration](https://github.com/TomaszBronk/it-news-intelligence-hub/actions/workflows/ci.yml/badge.svg)](https://github.com/TomaszBronk/it-news-intelligence-hub/actions/workflows/ci.yml)
 
-A full-stack application for collecting IT news from RSS and public APIs, organizing it into a personal briefing, generating Polish summaries, and preparing editable discussion-ready post drafts.
+A full-stack application for collecting IT news from RSS and public APIs, organizing it into a personal briefing, generating Polish AI-assisted summaries, and preparing editable discussion-ready post drafts.
 
 > The project demonstrates practical software engineering skills in .NET, ASP.NET Core, React, SQL Server, external API integrations, background processing, automated testing, CI and responsible AI-assisted content generation.
 
@@ -10,13 +10,13 @@ A full-stack application for collecting IT news from RSS and public APIs, organi
 
 Important technology news is distributed across many sources. Following relevant updates about .NET, Azure, AI, security, React, DevOps and data platforms can be time-consuming.
 
-IT News Intelligence Hub helps users collect selected news, organize it in one place, review original sources and later create verified Polish-language summaries or post drafts.
+IT News Intelligence Hub helps users collect selected news, organize it in one place, review original sources, create verified Polish-language summaries, and prepare editable post drafts or discussion prompts.
 
 ## Implemented features
 
 - ASP.NET Core Web API.
 - React frontend built with JavaScript and JSX.
-- React Router navigation between News sources and News items.
+- React Router navigation between News sources, News items and briefing views.
 - Axios HTTP client with centralized API error mapping.
 - TanStack Query for server-state caching, mutations, invalidation and automatic polling.
 - Modular monolith backend using Clean Architecture principles.
@@ -34,6 +34,23 @@ IT News Intelligence Hub helps users collect selected news, organize it in one p
   - Last import error.
 - Duplicate news detection by external feed ID and original article URL.
 - Imported news list with links to original articles.
+- Search and filtering for imported news items.
+- News item status workflow:
+  ```text
+  New → Read → Saved → Dismissed
+  ```
+- News item status updates from the React UI.
+- Personal notes for saved news items.
+- Briefing views:
+  - Saved briefing.
+  - Daily briefing for news from the last 24 hours.
+  - Weekly briefing for news from the last 7 days.
+- Polish AI-assisted news summaries.
+- Editable AI-assisted post drafts.
+- AI-assisted discussion prompts for developer communities.
+- Clear UI separation between original source content and AI-generated content.
+- Original source links displayed with summaries and drafts.
+- Manual review and editing support before sharing generated content.
 - Automatic UI refresh for source status and imported news.
 - OpenAPI / Swagger documentation.
 - Health check endpoint:
@@ -50,22 +67,11 @@ IT News Intelligence Hub helps users collect selected news, organize it in one p
 ## Planned features
 
 - RSS and public API source management improvements.
-- Categories, filters and saved news items.
-- Status workflow:
-  ```text
-  New → Read → Saved → Dismissed
-  ```
-- Personal notes for saved news items.
-- Daily and weekly IT briefing views.
-- Search, filtering and sorting.
-- Polish AI-assisted summaries.
-- Developer-impact and business-impact summary formats.
-- Editable post drafts and discussion prompts.
-- Manual review and approval before copying or publishing content.
-- User authentication and user-specific saved items.
+- Frontend component tests.
 - Docker Compose local environment.
 - Azure deployment.
 - Azure-oriented monitoring and observability.
+- User authentication and user-specific saved items.
 
 ## Technology stack
 
@@ -81,6 +87,8 @@ IT News Intelligence Hub helps users collect selected news, organize it in one p
 | Data access | Entity Framework Core |
 | RSS and Atom | `System.ServiceModel.Syndication` |
 | Background processing | .NET `BackgroundService` |
+| AI provider | OpenAI API |
+| AI content | Polish summaries, post drafts and discussion prompts |
 | API documentation | OpenAPI / Swagger |
 | API health | ASP.NET Core Health Checks |
 | Error format | RFC 7807 `ProblemDetails` |
@@ -91,9 +99,19 @@ IT News Intelligence Hub helps users collect selected news, organize it in one p
 
 ## Project status
 
-🚧 In development — Milestone 3 completed.
+🚧 In development — Milestone 4 completed.
 
 The application currently supports RSS/Atom source management, manual and scheduled feed imports, duplicate detection, import status tracking, a React-based interface, automated tests and GitHub Actions CI.
+
+Milestone 4 adds:
+
+- filtering and news item status management;
+- personal notes for news items;
+- Saved, Daily and Weekly briefing views;
+- Polish AI-assisted summaries;
+- editable post drafts;
+- AI-assisted discussion prompts;
+- clear separation of original source content and generated content in the UI.
 
 ## Architecture
 
@@ -109,20 +127,21 @@ ASP.NET Core Server
       v
 Application use cases and abstractions
       |
-      +---------------------------+
-      |                           |
-      v                           v
-Domain entities              Infrastructure
-                              - EF Core / SQL Server
-                              - RSS and Atom reader
-                              - background import worker
+      +--------------------------------------+
+      |                                      |
+      v                                      v
+Domain entities                         Infrastructure
+                                        - EF Core / SQL Server
+                                        - RSS and Atom reader
+                                        - background import worker
+                                        - OpenAI integration
 ```
 
 ### Backend
 
-- **Domain** contains business entities and rules. It has no dependency on frameworks, databases or infrastructure.
+- **Domain** contains business entities and rules. It has no dependency on frameworks, databases, external APIs or infrastructure.
 - **Application** contains use cases, commands, queries, interfaces and application-level business flow.
-- **Infrastructure** contains EF Core persistence, SQL Server integration, RSS/Atom HTTP communication, repositories and technical implementations.
+- **Infrastructure** contains EF Core persistence, SQL Server integration, RSS/Atom HTTP communication, OpenAI integration, repositories and technical implementations.
 - **Server** exposes HTTP endpoints, configures dependency injection, handles exceptions globally and hosts background services.
 
 ### Frontend
@@ -130,8 +149,9 @@ Domain entities              Infrastructure
 - **Axios** centralizes HTTP configuration, timeout configuration and API error mapping.
 - **TanStack Query** manages server state, cache invalidation, mutations, loading states, error states and automatic polling.
 - **React Router** provides navigation between application pages.
-- The frontend is organized by features, including `news-sources` and `news-items`.
+- The frontend is organized by features, including `news-sources`, `news-items` and `briefing`.
 - Local component state is used only for UI concerns such as forms, visibility and temporary user interactions.
+- The UI visually distinguishes imported source content from AI-generated summaries and drafts.
 
 ## Repository structure
 
@@ -170,8 +190,9 @@ it-news-intelligence-hub/
 - Original articles remain the property of their publishers.
 - The application stores only metadata and excerpts needed to create a briefing.
 - The application does not bypass paywalls or republish full articles.
-- Every future AI-generated summary or post draft must show the original source URL.
+- Every AI-generated summary, post draft or discussion prompt must show the original source URL.
 - AI-generated content must be reviewed, edited and verified by a human before use or publication.
+- AI-generated content is not treated as a replacement for the original article.
 - The MVP does not publish content automatically to LinkedIn or other platforms.
 - Do not commit API keys, tokens, passwords, confidential documents or customer data.
 
@@ -184,6 +205,7 @@ it-news-intelligence-hub/
 - Node.js LTS.
 - SQL Server Express LocalDB.
 - Git.
+- An OpenAI API key for AI-assisted summaries, post drafts and discussion prompts.
 
 ### 1. Clone the repository
 
@@ -200,6 +222,20 @@ Copy the example configuration file:
 Copy-Item `
   src/ItNewsIntelligenceHub.Server/appsettings.Development.example.json `
   src/ItNewsIntelligenceHub.Server/appsettings.Development.json
+```
+
+Configure the local database connection and, if you want to use AI generation, add your OpenAI configuration to the local file:
+
+```json
+{
+  "Ai": {
+    "Provider": "OpenAI",
+    "OpenAi": {
+      "ApiKey": "YOUR_OPENAI_API_KEY",
+      "Model": "gpt-4o-mini"
+    }
+  }
+}
 ```
 
 The local development configuration file is ignored by Git. Do not commit secrets, tokens or passwords.
@@ -312,7 +348,18 @@ npm run build
 | PUT | `/api/news-sources/{id}` | Updates a news source |
 | DELETE | `/api/news-sources/{id}` | Deletes a news source |
 | POST | `/api/news-sources/{id}/fetch` | Imports news from one source |
-| GET | `/api/news-items` | Lists imported news items |
+| GET | `/api/news-items` | Lists imported news items; supports status, category and search filtering |
+| PATCH | `/api/news-items/{id}/status` | Updates a news item status |
+| PATCH | `/api/news-items/{id}/note` | Adds, updates or clears a personal note |
+| POST | `/api/news-items/{id}/summary` | Generates and stores a Polish AI-assisted summary |
+| GET | `/api/news-items/{id}/summary` | Gets the latest saved summary for a news item |
+| POST | `/api/news-items/{id}/draft/generate-post` | Generates an editable AI-assisted post draft |
+| POST | `/api/news-items/{id}/draft/generate-discussion` | Generates an AI-assisted discussion prompt |
+| GET | `/api/news-items/{id}/draft` | Gets the latest saved post draft or discussion prompt |
+| PATCH | `/api/news-items/{id}/draft/{draftId}` | Updates a saved draft |
+| GET | `/api/briefings/saved` | Lists saved news items |
+| GET | `/api/briefings/daily` | Lists news items from the last 24 hours |
+| GET | `/api/briefings/weekly` | Lists news items from the last 7 days |
 | GET | `/health` | Returns application health status |
 
 ## Example news source request
@@ -340,10 +387,10 @@ npm run build
 - [x] Add unit tests for the RSS feed import use case.
 - [x] Add API integration tests.
 - [x] Add GitHub Actions CI workflow.
-- [ ] Add categories, filters and saved items.
-- [ ] Add daily and weekly briefing views.
-- [ ] Add Polish AI-assisted summaries.
-- [ ] Add editable post drafts and discussion prompts.
+- [x] Add categories, filters and saved items.
+- [x] Add daily and weekly briefing views.
+- [x] Add Polish AI-assisted summaries.
+- [x] Add editable post drafts and discussion prompts.
 - [ ] Add frontend component tests.
 - [ ] Add Docker Compose local environment.
 - [ ] Deploy to Azure.
@@ -351,7 +398,6 @@ npm run build
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
-
 
 ## Author
 
